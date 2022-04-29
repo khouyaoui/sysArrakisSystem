@@ -31,8 +31,6 @@
 #include <sys/socket.h>  // int socket(), connect(), struct sockaddr_in
 //#include <netinet/in.h>
 
-#include <semaphore.h>
-#include <sys/mman.h> 
 // ----------------------------------  Librerias PROPIAS  ----------------------------------
 #include "tipos.h"
 
@@ -48,12 +46,14 @@ void display(char *string);
 
 char *readUntil(int fd, char end);
 
-void esperarConexiones(Config_Data *c);
+char *readInput();
 
-uint16_t controlaPuerto(char *user_port);
+char *extraerPalabra(char ***string, int *i);
 
-void errorReadSocket(int num_bytes);
+int contarPalabras(char ***string);
 
-sem_t *inicializarSemaforo();
+void pasarMinus(char *frase);
+
+void encapsulaTrama(char *origen, char tipo, char *datos, char *trama);
 
 #endif

@@ -1,0 +1,9 @@
+{
+    "files.associations": {
+        "comandos.h": "c",
+        "sockets.h": "c",
+        "netdb.h": "c",
+        "funciones.h": "c",
+        "typeinfo": "c"
+    }
+}

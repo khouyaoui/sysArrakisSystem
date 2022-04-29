@@ -31,7 +31,7 @@ void extraerConexiones(Conexion **conexiones,int ***numConexiones); // escriber 
 
 void cargarConexiones(Conexion *conexiones); // leer las conexiones guardadas anteriormente, si el fichero existe
 
-int puedoCargarConexiones();
+int existenConexiones();
 
 void printConexiones(Conexion *conexiones,int *numConexiones);
 

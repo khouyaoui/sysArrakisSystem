@@ -13,7 +13,10 @@ void sigHandler(int signum)
     if (signum == SIGINT)
     {
         // liberarStructConfig_Data(&c);
-        extraerConexiones(conexiones,&numConexiones);
+        if (**numConexiones > 0)
+        {
+            extraerConexiones(conexiones,&numConexiones);
+        }
         display(FINAL_MSG);
         exit(EXIT_SUCCESS);
     }
