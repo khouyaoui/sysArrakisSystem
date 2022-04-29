@@ -42,5 +42,14 @@ typedef struct {
     char *port_server;
     char *directorio;
 } Config_Data;
-
+typedef struct
+{
+  int id;			    // identificador asignado por atraides
+  char codigoPostal[10];		// codigo postal del Fremen
+  char nom[20];			// nombre del Fremen
+  int online;			// 0 | 1 Esta conectado B??
+} Conexion;
+Config_Data c;
+Conexion *conexiones;
+int *numConexiones;
 #endif

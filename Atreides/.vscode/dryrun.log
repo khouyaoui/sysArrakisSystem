@@ -1,0 +1,10 @@
+make --dry-run --always-make --keep-going --print-directory
+make: Entering directory '/home/moha/sysArrakisSystem/Atreides'
+gcc -c -pthread -g main.c -Wall -Wextra
+gcc -c -g funciones.c -Wall -Wextra
+gcc -c -g ficheros.c -Wall -Wextra
+gcc -c -g sockets.c -Wall -Wextra
+gcc -c -g conexiones.c -Wall -Wextra
+gcc -pthread main.o funciones.o ficheros.o sockets.o conexiones.o -o ATREIDES.exe
+make: Leaving directory '/home/moha/sysArrakisSystem/Atreides'
+ 
