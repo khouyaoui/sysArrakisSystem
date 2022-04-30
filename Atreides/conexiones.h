@@ -9,6 +9,7 @@
 #include "sockets.h"
 #include <semaphore.h>
 #include <unistd.h>
+#include "ficheros.h"
 
 
 int inicializarListaConexiones(Conexion **conexiones,int **numConexiones);
@@ -25,7 +26,6 @@ void extraerConexiones(Conexion *conexiones,int *numConexiones); // escriber la 
 
 int cargarConexiones(Conexion *conexiones); // leer las conexiones guardadas anteriormente, si el fichero existe
 
-int existenConexiones();
 
 void printConexiones(Conexion *conexiones,int *numConexiones);
 
@@ -37,7 +37,7 @@ void gestionarTrama(int sfd2, Config_Data config, char *trama, Conexion *conexio
 
 int generarID(Conexion *conexiones, int *numConexiones,char* nom);
 
-void encapsulaTrama(char *origen, char tipo, char *datos, char *trama);
+void desconectarCliente(Conexion *conexiones,int* numConexiones);
 
-void desconectarCliente(Conexion *conexiones,int* numConexiones, Config_Data config);
+int buscarPorCodigoPostal(char *codigoPostal,Conexion *conexiones, int *numConexiones); 
 #endif

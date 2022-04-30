@@ -18,6 +18,7 @@ void sigHandler(int signum)
 }
 int main(int argc, char *argv[])
 {
+     
     errorNumArgumentos(argc);
     display(INIT_MSG);
     readConfig(argv[1], &c);
@@ -37,6 +38,7 @@ int main(int argc, char *argv[])
             exit(-1);
         case 0:
             signal(SIGINT, SIG_IGN);
+            signal(SIGCHLD, SIG_IGN);
             close(sfd1);
             atenderCliente(c, sfd2, conexiones, numConexiones, semaforo);
             exit(0);

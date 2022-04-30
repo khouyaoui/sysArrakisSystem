@@ -52,4 +52,5 @@ typedef struct
 Config_Data c;
 Conexion *conexiones;
 int *numConexiones;
+int id;
 #endif

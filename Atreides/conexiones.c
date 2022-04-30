@@ -68,65 +68,16 @@ int existeConexion(int id, Conexion *conexiones, int *numConexiones)
     }
     return existe;
 }
-// escriber la lista de conexiones en un fichero txt o binario :<
-void extraerConexiones(Conexion *conexiones, int *numConexiones)
-{
-    int fd = open("conexiones.txt", O_WRONLY | O_CREAT | O_TRUNC);
-    if (fd < 0)
-    {
-        display("\nError al abrir l'arxiu conexiones.txt\n");
-        exit(1);
-    }
-
-    for (int n = 0; n < *numConexiones; n++)
-    {
-        write(fd, conexiones + n, sizeof(Conexion));
-    }
-    close(fd);
-}
-
-// leer las conexiones guardadas anteriormente, si el fichero existe
-int cargarConexiones(Conexion *conexiones)
-{
-
-    int fd = open("conexiones.txt", O_RDONLY);
-    if (fd < 0)
-    {
-        display("\nError al abrir l'arxiu conexiones.txt\n");
-        exit(1);
-    }
-    int n = 0;
-    while (0 < read(fd, conexiones + n, sizeof(Conexion)))
-    {
-        n++;
-    }
-
-    close(fd);
-    return n;
-}
-
-int existenConexiones()
-{
-    int existe = 0;
-    FILE *file;
-    file = fopen("conexiones.txt", "r");
-    if (file)
-    {
-        existe = 1;
-        fclose(file);
-    }
-    return existe;
-}
 
 void printConexiones(Conexion *conexiones, int *numConexiones)
 {
     for (int i = 0; i < *numConexiones; i++)
     {
         printf("client %d\n", i + 1);
-        printf("%s\n", conexiones[i].nom);
-        printf("%s\n", conexiones[i].codigoPostal);
-        printf("%d\n", conexiones[i].id);
-        printf("%d\n", conexiones[i].online);
+        printf("nom ->%s\n", conexiones[i].nom);
+        printf("codi postal->%s\n", conexiones[i].codigoPostal);
+        printf("id ->%d\n", conexiones[i].id);
+        printf("online ->%d\n", conexiones[i].online);
     }
 }
 
@@ -143,7 +94,7 @@ int atenderCliente(Config_Data config, int sfd2, Conexion *conexiones, int *numC
         else if (nbytes == 0)
         {
             printf("client colsed\n");
-            desconectarCliente(conexiones, numConexiones, config);
+            desconectarCliente(conexiones, numConexiones);
             _exit(0);
         }
         else
@@ -156,28 +107,27 @@ int atenderCliente(Config_Data config, int sfd2, Conexion *conexiones, int *numC
             gestionarTrama(sfd2, config, trama, conexiones, semaforo, numConexiones);
             contador = 0;
         }
+        display(TERMINAL_PROMPT);
     }
-    display(TERMINAL_PROMPT);
 }
-void desconectarCliente(Conexion *conexiones,int* numConexiones, Config_Data config)
+void desconectarCliente(Conexion *conexiones, int *numConexiones)
 {
     for (int i = 0; i < *numConexiones; i++)
     {
         if (conexiones[i].id == id)
         {
+            conexiones[i].online = 0;
         }
-        printf("client %d\n", i + 1);
-        printf("%s\n", conexiones[i].nom);
-        printf("%s\n", conexiones[i].codigoPostal);
-        printf("%d\n", conexiones[i].id);
-        printf("%d\n", conexiones[i].online);
     }
+    // printConexiones(conexiones, numConexiones);
 }
 
 void gestionarTrama(int sfd2, Config_Data config, char *trama, Conexion *conexiones, sem_t *semaforo, int *numConexiones)
 {
     Conexion *conexion;
     char datos[LEN_DATOS];
+    int count;
+
     // printf("write trama\n");
     // write(0,trama,256);
     // printf("\n");
@@ -197,8 +147,11 @@ void gestionarTrama(int sfd2, Config_Data config, char *trama, Conexion *conexio
                 cadena = strtok(NULL, "*");
             }
         }
-        int id = generarID(conexiones, numConexiones, conexion->nom);
+        free(cadena);
+        id = generarID(conexiones, numConexiones, conexion->nom);
         sprintf(datos, "%d", id);
+        fprintf(stdout, "\nRebut login %s %s\n", conexion->nom, conexion->codigoPostal);
+        fprintf(stdout, "Assignat a ID %d.\nEnviada resposta\n\n", id);
         encapsulaTrama(MACHINE_NAME, 'O', datos, trama);
         write(sfd2, trama, LEN_TRAMA);
         // registrar conexion Memoria compartida!
@@ -206,32 +159,65 @@ void gestionarTrama(int sfd2, Config_Data config, char *trama, Conexion *conexio
         conexion->online = 1;
         sem_wait(semaforo);
         insertarConexion(conexion, conexiones, numConexiones);
-        printConexiones(conexiones, numConexiones);
         sem_post(semaforo);
-
+        free(conexion);
         break;
     case 'S':
-        // buscar en la lista segun el codigo postal recibido
-        muestraDatos(trama);
-        // Conexion *c;
-        //  zona critica, consulta lista que esta memoria compartida
-        sem_wait(semaforo);
-        // c = obtenirConexion(00001,conexiones);
-        sem_post(semaforo);
+        conexion = malloc(sizeof(Conexion));
         extraeDatos(datos, trama);
-        // display("Rebut search 08301 de Moha 744\n");
-        // display("Hi ha 1 persones humanes a 08022\n");
-        // display("Feta la cerca\n");
-        // encapsulaTrama(MACHINE_NAME, 'L', datos, trama);
-        // write(sfd2, trama, LEN_TRAMA);
-        //  enviar las conexiones de ese codigo postal
+        cadena = strtok(datos, "*");
+        strcpy(conexion->nom, cadena);
+        cadena = strtok(NULL, "*");
+        conexion->id = atoi(cadena);
+        cadena = strtok(NULL, "*");
+        strcpy(conexion->codigoPostal, cadena);
+
+        printf("Rebut search %s de %s %d", conexion->codigoPostal, conexion->nom, conexion->id);
+        display("Feta la cerca\n");
+        bzero(datos, LEN_DATOS);
+        sem_wait(semaforo);
+        count = buscarPorCodigoPostal(conexion->codigoPostal, conexiones, numConexiones);
+        sem_post(semaforo);
+        fprintf(stdout, "Hi ha %d persones humanes a %s", count, conexion->codigoPostal);
+        if (count > 0)
+        {
+            char *aux = malloc(sizeof(char *));
+            sprintf(datos, "%d*", count);
+            sem_wait(semaforo);
+            for (int i = strlen(datos); i < *numConexiones; i++)
+            {
+                if (0 == strcmp(conexiones[i].codigoPostal, conexion->codigoPostal))
+                {
+                    fprintf(stdout, "%d %s", conexiones[i].id, conexiones[i].nom);
+                    strcat(datos, conexiones[i].nom);
+                    strcat(datos, "*");
+                    sprintf(aux, "%d", conexiones[i].id);
+                    strcat(datos, aux);
+                    if (i < count)
+                    {
+                        strcat(datos, "*");
+                    }
+                }
+            }
+            sem_post(semaforo);
+        }
+        // display(datos);
+        encapsulaTrama(MACHINE_NAME, 'L', datos, trama);
+        write(sfd2, trama, LEN_TRAMA);
         break;
     case 'Q':
-        muestraDatos(trama);
-        printf("Adeu Fremen !!\n\n");
+        conexion = malloc(sizeof(Conexion));
+        extraeDatos(datos, trama);
+        cadena = strtok(datos, "*");
+        strcpy(conexion->nom, cadena);
+        cadena = strtok(NULL, "*");
+        conexion->id = atoi(cadena);
+        desconectarCliente(conexiones, numConexiones);
+        fprintf(stdout, "\nRebut logout de %s %d\n", conexion->nom, conexion->id);
+        display("Desconnectat d’Atreides.\n");
         close(sfd2);
+        exit(0);
         break;
-
     default:
         printf("ERROR trama Z\n\n");
         encapsulaTrama(MACHINE_NAME, 'Z', "“ERROR DE TRAMA”", trama);
@@ -253,18 +239,15 @@ int generarID(Conexion *conexiones, int *numConexiones, char *nom)
     return 1000 + *numConexiones;
 }
 
-void encapsulaTrama(char *origen, char tipo, char *datos, char *trama)
+int buscarPorCodigoPostal(char *codigoPostal, Conexion *conexiones, int *numConexiones)
 {
-    int j, i = LEN_ORIGEN + 1;
-    int length = strlen(datos);
-
-    bzero(trama, LEN_TRAMA);
-    strcat(trama, origen);
-    trama[LEN_ORIGEN] = tipo;
-
-    for (j = 0; j < length; j++)
+    int count = 0;
+    for (int i = 0; i < *numConexiones; i++)
     {
-        trama[i] = datos[j];
-        i++;
+        if (0 == strcmp(conexiones[i].codigoPostal, codigoPostal))
+        {
+            count++;
+        }
     }
+    return count;
 }

@@ -5,8 +5,9 @@ make all --print-data-base --no-builtin-variables --no-builtin-rules --question
 # License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
 # This is free software: you are free to change and redistribute it.
 # There is NO WARRANTY, to the extent permitted by law.
+ 
 
-# Make data base, printed on Sat Apr 30 00:48:14 2022
+# Make data base, printed on Sat Apr 30 01:21:13 2022
 
 # Variables
 
@@ -33,7 +34,6 @@ SHELL = /bin/sh
 # environment
 VSCODE_NLS_CONFIG = {"locale":"es","availableLanguages":{}}
 # environment
- 
 _ = /root/.vscode-server/bin/dfd34e8260c270da74b5c2d86d61aee4b6d56977/node
 # makefile (from 'makefile', line 1)
 MAKEFILE_LIST :=  makefile
@@ -73,7 +73,6 @@ PWD = /home/moha/sysArrakisSystem/Atreides
 WSL_INTEROP = /run/WSL/24291_interop
 # environment
 VSCODE_AMD_ENTRYPOINT = vs/workbench/api/node/extensionHostProcess
- 
 # environment
 HOME = /root
 # environment
@@ -128,7 +127,9 @@ MAKEFILES :=
 <F = $(notdir $<)
 # environment
 LC_ALL = C
+ 
 # environment
+ 
 HOSTTYPE = x86_64
 # automatic
 ^F = $(notdir $^)
@@ -167,7 +168,7 @@ MOTD_SHOWN = update-motd
 
 # Files
 
-conexiones.o: conexiones.c conexiones.h tipos.h sockets.h
+conexiones.o: conexiones.c conexiones.h tipos.h sockets.h ficheros.h
 #  Implicit rule search has not been done.
 #  Modification time never checked.
 #  File has not been updated.
@@ -176,6 +177,7 @@ conexiones.o: conexiones.c conexiones.h tipos.h sockets.h
 
 all: ATREIDES
 #  Command line target.
+ 
 #  Implicit rule search has been done.
 #  File does not exist.
 #  File has been updated.
@@ -193,7 +195,7 @@ go:
 # Not a target:
 sockets.c:
 #  Implicit rule search has been done.
-#  Last modified 2022-04-29 17:45:31.0603054
+#  Last modified 2022-04-30 01:15:49.0789935
 #  File has been updated.
 #  Successfully updated.
 
@@ -249,7 +251,7 @@ val:
 # Not a target:
 makefile:
 #  Implicit rule search has been done.
-#  Last modified 2022-04-29 08:45:14
+#  Last modified 2022-04-30 01:21:08.8089935
 #  File has been updated.
 #  Successfully updated.
 
@@ -269,7 +271,7 @@ funciones.h:
 # Not a target:
 conexiones.h:
 #  Implicit rule search has been done.
-#  Last modified 2022-04-30 00:40:02.5689935
+#  Last modified 2022-04-30 01:20:46.1989935
 #  File has been updated.
 #  Successfully updated.
 
@@ -282,7 +284,7 @@ ficheros.c:
 # Not a target:
 tipos.h:
 #  Implicit rule search has been done.
-#  Last modified 2022-04-30 00:31:25.4689935
+#  Last modified 2022-04-30 00:55:23.7689935
 #  File has been updated.
 #  Successfully updated.
 
@@ -315,7 +317,7 @@ sockets.o: sockets.c sockets.h tipos.h funciones.c
 main.o: main.c funciones.h sockets.c tipos.h conexiones.h
 #  Implicit rule search has not been done.
 #  Implicit/static pattern stem: ''
-#  Last modified 2022-04-30 00:31:33.2189935
+#  Last modified 2022-04-30 01:20:04.2789935
 #  File has been updated.
 #  Needs to be updated (-q is set).
 # automatic
@@ -333,7 +335,7 @@ main.o: main.c funciones.h sockets.c tipos.h conexiones.h
 # automatic
 # ^ := main.c funciones.h sockets.c tipos.h conexiones.h
 # automatic
-# ? := main.c conexiones.h
+# ? := conexiones.h
 # variable set hash-table stats:
 # Load=8/32=25%, Rehash=0, Collisions=1/11=9%
 #  recipe to execute (from 'makefile', line 4):
@@ -347,7 +349,7 @@ funciones.o: funciones.c funciones.h tipos.h
 	gcc -c -g funciones.c -Wall -Wextra
 
 # files hash-table stats:
-# Load=23/1024=2%, Rehash=0, Collisions=1/61=2%
+# Load=23/1024=2%, Rehash=0, Collisions=1/62=2%
 # VPATH Search Paths
 
 # No 'vpath' search paths.
@@ -356,11 +358,10 @@ funciones.o: funciones.c funciones.h tipos.h
 
 # strcache buffers: 1 (0) / strings = 32 / storage = 309 B / avg = 9 B
 # current buf: size = 8162 B / used = 309 B / count = 32 / avg = 9 B
- 
 
-# strcache performance: lookups = 78 / hit rate = 58%
+# strcache performance: lookups = 79 / hit rate = 59%
 # hash-table stats:
-# Load=32/8192=0%, Rehash=0, Collisions=1/78=1%
-# Finished Make data base on Sat Apr 30 00:48:14 2022
+# Load=32/8192=0%, Rehash=0, Collisions=1/79=1%
+# Finished Make data base on Sat Apr 30 01:21:13 2022
 
  

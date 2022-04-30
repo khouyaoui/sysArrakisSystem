@@ -12,4 +12,7 @@ void extraeDatos(char *datos, char *trama);
 void muestraDatos(char *trama);
 
 int aceptarConexion(int sfd2);
+
+void encapsulaTrama(char *origen, char tipo, char *datos, char *trama);
+
 #endif

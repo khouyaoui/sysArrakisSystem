@@ -23,6 +23,7 @@ int crearConexion(char *ip, uint16_t port)
         display("server error al abrir function => socket\n");
         exit(-1);
     }
+    //reutilizar la ip ocupada por bind
     int opt = 1;
     setsockopt (sockfd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof (opt));
       
@@ -77,4 +78,19 @@ int aceptarConexion(int sfd1)
         exit(-1);
     }
     return sfd2;
+}
+void encapsulaTrama(char *origen, char tipo, char *datos, char *trama)
+{
+    int j, i = LEN_ORIGEN + 1;
+    int length = strlen(datos);
+
+    bzero(trama, LEN_TRAMA);
+    strcat(trama, origen);
+    trama[LEN_ORIGEN] = tipo;
+
+    for (j = 0; j < length; j++)
+    {
+        trama[i] = datos[j];
+        i++;
+    }
 }

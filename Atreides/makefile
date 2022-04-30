@@ -6,7 +6,7 @@ main.o: main.c funciones.h sockets.c tipos.h conexiones.h
 funciones.o: funciones.c funciones.h tipos.h
 	gcc -c -g funciones.c -Wall -Wextra
 
-conexiones.o: conexiones.c conexiones.h tipos.h sockets.h
+conexiones.o: conexiones.c conexiones.h tipos.h sockets.h ficheros.h
 	gcc -c -g conexiones.c -Wall -Wextra
 
 ficheros.o: ficheros.c ficheros.h tipos.h
