@@ -4,6 +4,7 @@
 // Zona de CONSTANTES
 #define MAX_PORT_RANGE 65535
 #define MIN_PORT_RANGE 1
+#define MAX_CON 50
 #define MAX_STR 512
 #define NUM_ARG 2
 #define LOGIN "login"
@@ -49,6 +50,14 @@ typedef struct
   char nom[20];			// nombre del Fremen
   int online;			// 0 | 1 Esta conectado B??
 } Conexion;
+
+typedef struct
+{		     
+  char nom[20];		
+  int mida;			 
+  int checksum;			 
+} File;
+
 Config_Data c;
 Conexion *conexiones;
 int *numConexiones;

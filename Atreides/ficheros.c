@@ -29,12 +29,15 @@ void extraerConexiones(Conexion *conexiones, int *numConexiones)
     }
     else
     {
-
         for (int n = 0; n < *numConexiones; n++)
         {
             conexiones[n].online = 0;
             write(fd, conexiones + n, sizeof(Conexion));
         }
+        //TODO
+        munmap(conexiones,sizeof(conexiones)*MAX_CON);
+        munmap(numConexiones,sizeof(int));
+
         close(fd);
     }
 }

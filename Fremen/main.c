@@ -5,32 +5,27 @@
 // Zona de variables_globales
 Config_Data c;
 
-void sigHandler(int signum)
-{
-    // SIGINT
-    if (signum == SIGINT)
-    {
+void sigHandler(int signum) {
+    if (signum == SIGINT) {
         liberarStructConfig_Data(&c);
         display(FINAL_MSG);
         exit(EXIT_SUCCESS);
     }
 }
 
-int main(int argc, char *argv[])
-{
+int main(int argc, char *argv[]) {
     char *input = NULL;
+    int fdsocket = 0;
+
     errorNumArgumentos(argc);
     readConfig(argv[1], &c);
     signal(SIGINT, sigHandler);
-    int fdsocket=0;
-    for (;;)
-    {
+    for (;;) {
         display(TERMINAL_PROMPT);
         input = readInput();
-        //printf("strlen = %ld\n", strlen(input));
+        // printf("strlen = %ld\n", strlen(input));
         if (strlen(input))
             gestionarComandos(&input, &c, &fdsocket);
     }
-
     return 0;
 }

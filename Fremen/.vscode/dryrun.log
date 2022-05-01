@@ -1,0 +1,10 @@
+make --dry-run --always-make --keep-going --print-directory
+make: Entering directory '/home/moha/sysArrakisSystem/Fremen'
+gcc -c -g main.c -Wall -Wextra
+gcc -c -g funciones.c -Wall -Wextra
+gcc -c -g ficheros.c -Wall -Wextra
+gcc -c -g comandos.c -Wall -Wextra
+gcc -c -g sockets.c -Wall -Wextra
+gcc main.o funciones.o ficheros.o comandos.o sockets.o -o Fremen.exe
+make: Leaving directory '/home/moha/sysArrakisSystem/Fremen'
+ 

@@ -31,9 +31,9 @@ void printConexiones(Conexion *conexiones,int *numConexiones);
 
 sem_t *inicializarSemaforo();
 
-int atenderCliente(Config_Data c,int sfd2,Conexion *conexiones,int *numConexiones,sem_t *semaforo);
+int atenderCliente(int sfd2,Conexion *conexiones,int *numConexiones,sem_t *semaforo);
 
-void gestionarTrama(int sfd2, Config_Data config, char *trama, Conexion *conexiones, sem_t *semaforo, int *numConexiones);
+void gestionarTrama(int sfd2, char *trama, Conexion *conexiones, sem_t *semaforo, int *numConexiones);
 
 int generarID(Conexion *conexiones, int *numConexiones,char* nom);
 

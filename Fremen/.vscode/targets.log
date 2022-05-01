@@ -6,7 +6,7 @@ make all --print-data-base --no-builtin-variables --no-builtin-rules --question
 # This is free software: you are free to change and redistribute it.
 # There is NO WARRANTY, to the extent permitted by law.
 
-# Make data base, printed on Sun May  1 03:45:22 2022
+# Make data base, printed on Sun May  1 01:08:10 2022
 
 # Variables
 
@@ -27,7 +27,7 @@ VSCODE_LOG_NATIVE = false
 # automatic
 @F = $(notdir $@)
 # makefile
-CURDIR := /home/moha/sysArrakisSystem/Atreides
+CURDIR := /home/moha/sysArrakisSystem/Fremen
 # makefile
 SHELL = /bin/sh
 # environment
@@ -53,7 +53,7 @@ PATH = /root/.vscode-server/bin/dfd34e8260c270da74b5c2d86d61aee4b6d56977/bin/rem
 # environment
 VSCODE_LOG_STACK = false
 # environment
-VSCODE_IPC_HOOK_CLI = /tmp/vscode-ipc-29225e74-6ced-4247-a76b-4e1aec1be851.sock
+VSCODE_IPC_HOOK_CLI = /tmp/vscode-ipc-26733d04-7f07-4ddf-aa39-141cbb9a3cc6.sock
 # default
 .FEATURES := target-specific order-only second-expansion else-if shortest-stem undefine oneshell archives jobserver output-sync check-symlink load
 # environment
@@ -63,7 +63,7 @@ LS_COLORS = rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:
 # environment
 VSCODE_PIPE_LOGGING = true
 # environment
-PWD = /home/moha/sysArrakisSystem/Atreides
+PWD = /home/moha/sysArrakisSystem/Fremen
 # default
 .LOADED := 
 # environment
@@ -77,7 +77,7 @@ LESSCLOSE = /usr/bin/lesspipe %s %s
 # environment
 LOGNAME = root
 # environment
-APPLICATION_INSIGHTS_NO_DIAGNOSTIC_CHANNEL = true
+APPLICATION_INSIGHTS_NO_DIAGNOSTIC_CHANNEL = 1
 # environment
 VSCODE_HANDLES_UNCAUGHT_ERRORS = true
 # automatic
@@ -153,9 +153,9 @@ MOTD_SHOWN = update-motd
 
 # Directories
 
-# . (device 2064, inode 660): 23 files, no impossibilities.
+# . (device 2064, inode 47877): 25 files, no impossibilities.
 
-# 23 files, no impossibilities in 1 directories.
+# 25 files, no impossibilities in 1 directories.
 
 # Implicit Rules
 
@@ -163,14 +163,7 @@ MOTD_SHOWN = update-motd
 
 # Files
 
-conexiones.o: conexiones.c conexiones.h tipos.h sockets.h ficheros.h
-#  Implicit rule search has not been done.
-#  Modification time never checked.
-#  File has not been updated.
-#  recipe to execute (from 'makefile', line 10):
-	gcc -c -g conexiones.c -Wall -Wextra
-
-all: ATREIDES
+all: Fremen
 #  Command line target.
 #  Implicit rule search has been done.
 #  File does not exist.
@@ -183,34 +176,42 @@ go:
 #  Implicit rule search has not been done.
 #  Modification time never checked.
 #  File has not been updated.
-#  recipe to execute (from 'makefile', line 25):
-	./ATREIDES.exe config.dat
+#  recipe to execute (from 'makefile', line 26):
+	./Fremen.exe config.dat
 
 # Not a target:
 sockets.c:
 #  Implicit rule search has been done.
-#  Last modified 2022-04-30 14:09:50.9984749
+#  Last modified 2022-04-30 16:46:48
 #  File has been updated.
 #  Successfully updated.
 
 # Not a target:
 main.c:
 #  Implicit rule search has been done.
-#  Last modified 2022-04-30 22:41:03.4872646
+#  Last modified 2022-04-30 17:13:42
 #  File has been updated.
 #  Successfully updated.
 
 ficheros.o: ficheros.c ficheros.h tipos.h
 #  Implicit rule search has not been done.
-#  Modification time never checked.
-#  File has not been updated.
-#  recipe to execute (from 'makefile', line 13):
+#  Last modified 2022-04-30 18:43:57.4546257
+#  File has been updated.
+#  Successfully updated.
+#  recipe to execute (from 'makefile', line 11):
 	gcc -c -g ficheros.c -Wall -Wextra
 
 # Not a target:
 funciones.c:
 #  Implicit rule search has been done.
-#  Last modified 2022-04-30 22:48:28.4572646
+#  Last modified 2022-04-28 10:22:22
+#  File has been updated.
+#  Successfully updated.
+
+# Not a target:
+comandos.c:
+#  Implicit rule search has been done.
+#  Last modified 2022-04-30 19:47:31.2546257
 #  File has been updated.
 #  Successfully updated.
 
@@ -220,67 +221,80 @@ funciones.c:
 #  Modification time never checked.
 #  File has not been updated.
 
-ATREIDES: main.o funciones.o ficheros.o sockets.o conexiones.o
-#  Implicit rule search has not been done.
-#  File does not exist.
-#  File has been updated.
-#  Needs to be updated (-q is set).
-# variable set hash-table stats:
-# Load=0/32=0%, Rehash=0, Collisions=0/3=0%
-#  recipe to execute (from 'makefile', line 19):
-	gcc -pthread main.o funciones.o ficheros.o sockets.o conexiones.o -o ATREIDES.exe
-
 # Not a target:
 sockets.h:
-#  Implicit rule search has not been done.
-#  Modification time never checked.
-#  File has not been updated.
+#  Implicit rule search has been done.
+#  Last modified 2022-04-28 10:22:22
+#  File has been updated.
+#  Successfully updated.
 
 val:
 #  Implicit rule search has not been done.
 #  Modification time never checked.
 #  File has not been updated.
-#  recipe to execute (from 'makefile', line 28):
-	valgrind --tool=memcheck --leak-check=yes --show-reachable=yes --track-fds=yes ./ATREIDES.exe config.dat
+#  recipe to execute (from 'makefile', line 29):
+	valgrind --tool=memcheck --leak-check=yes --show-reachable=yes --track-fds=yes ./Fremen.exe config.dat
 
 # Not a target:
 makefile:
 #  Implicit rule search has been done.
-#  Last modified 2022-04-30 01:21:08.8089935
+#  Last modified 2022-04-28 10:22:22
 #  File has been updated.
 #  Successfully updated.
 
-# Not a target:
-conexiones.c:
+Fremen: main.o funciones.o ficheros.o comandos.o sockets.o
 #  Implicit rule search has not been done.
-#  Modification time never checked.
-#  File has not been updated.
+#  Implicit/static pattern stem: ''
+#  File does not exist.
+#  File has been updated.
+#  Needs to be updated (-q is set).
+# automatic
+# @ := Fremen
+# automatic
+# % := 
+# automatic
+# * := 
+# automatic
+# + := main.o funciones.o ficheros.o comandos.o sockets.o
+# automatic
+# | := 
+# automatic
+# < := main.o
+# automatic
+# ^ := main.o funciones.o ficheros.o comandos.o sockets.o
+# automatic
+# ? := main.o funciones.o ficheros.o comandos.o sockets.o
+# variable set hash-table stats:
+# Load=8/32=25%, Rehash=0, Collisions=1/11=9%
+#  recipe to execute (from 'makefile', line 20):
+	gcc main.o funciones.o ficheros.o comandos.o sockets.o -o Fremen.exe
 
 # Not a target:
 funciones.h:
 #  Implicit rule search has been done.
-#  Last modified 2022-04-27 23:20:20
+#  Last modified 2022-04-28 10:22:22
 #  File has been updated.
 #  Successfully updated.
 
 # Not a target:
-conexiones.h:
+comandos.h:
 #  Implicit rule search has been done.
-#  Last modified 2022-04-30 22:24:21.1572646
+#  Last modified 2022-04-30 17:39:24
 #  File has been updated.
 #  Successfully updated.
 
 # Not a target:
 ficheros.c:
+#  Implicit rule search has been done.
+#  Last modified 2022-04-28 10:22:22
+#  File has been updated.
+#  Successfully updated.
  
-#  Implicit rule search has not been done.
-#  Modification time never checked.
-#  File has not been updated.
 
 # Not a target:
 tipos.h:
 #  Implicit rule search has been done.
-#  Last modified 2022-04-30 19:42:13.9346257
+#  Last modified 2022-04-28 10:22:22
 #  File has been updated.
 #  Successfully updated.
 
@@ -294,71 +308,62 @@ clean:
 #  Implicit rule search has not been done.
 #  Modification time never checked.
 #  File has not been updated.
-#  recipe to execute (from 'makefile', line 22):
+#  recipe to execute (from 'makefile', line 23):
 	rm *.o *.exe
 
 # Not a target:
 ficheros.h:
-#  Implicit rule search has not been done.
-#  Modification time never checked.
-#  File has not been updated.
-
-sockets.o: sockets.c sockets.h tipos.h funciones.c
-#  Implicit rule search has not been done.
-#  Modification time never checked.
-#  File has not been updated.
-#  recipe to execute (from 'makefile', line 16):
-	gcc -c -g sockets.c -Wall -Wextra
-
-main.o: main.c funciones.h sockets.c tipos.h conexiones.h
-#  Implicit rule search has not been done.
-#  Last modified 2022-04-30 22:47:31.8472646
+#  Implicit rule search has been done.
+#  Last modified 2022-04-28 10:22:22
 #  File has been updated.
 #  Successfully updated.
-#  recipe to execute (from 'makefile', line 4):
-	gcc -c -pthread -g main.c -Wall -Wextra
+
+sockets.o: sockets.c sockets.h funciones.h tipos.h
+#  Implicit rule search has not been done.
+#  Last modified 2022-04-30 18:43:57.5546257
+#  File has been updated.
+#  Successfully updated.
+#  recipe to execute (from 'makefile', line 17):
+	gcc -c -g sockets.c -Wall -Wextra
+
+main.o: main.c funciones.h comandos.h tipos.h
+#  Implicit rule search has not been done.
+#  Last modified 2022-04-30 18:43:57.3646257
+#  File has been updated.
+#  Successfully updated.
+#  recipe to execute (from 'makefile', line 5):
+	gcc -c -g main.c -Wall -Wextra
 
 funciones.o: funciones.c funciones.h tipos.h
 #  Implicit rule search has not been done.
-#  Implicit/static pattern stem: ''
-#  Last modified 2022-04-30 22:47:31.9472646
+#  Last modified 2022-04-30 18:43:57.4146257
 #  File has been updated.
-#  Needs to be updated (-q is set).
-# automatic
-# @ := funciones.o
-# automatic
-# % := 
-# automatic
-# * := 
-# automatic
-# + := funciones.c funciones.h tipos.h
-# automatic
-# | := 
-# automatic
-# < := funciones.c
-# automatic
-# ^ := funciones.c funciones.h tipos.h
-# automatic
-# ? := funciones.c
-# variable set hash-table stats:
-# Load=8/32=25%, Rehash=0, Collisions=1/11=9%
-#  recipe to execute (from 'makefile', line 7):
+#  Successfully updated.
+#  recipe to execute (from 'makefile', line 8):
 	gcc -c -g funciones.c -Wall -Wextra
 
+comandos.o: comandos.c comandos.h funciones.h tipos.h sockets.h
+#  Implicit rule search has not been done.
+#  Last modified 2022-04-30 22:01:52.2072646
+#  File has been updated.
+#  Successfully updated.
+#  recipe to execute (from 'makefile', line 14):
+	gcc -c -g comandos.c -Wall -Wextra
+
 # files hash-table stats:
-# Load=23/1024=2%, Rehash=0, Collisions=1/62=2%
+# Load=23/1024=2%, Rehash=0, Collisions=1/61=2%
 # VPATH Search Paths
 
 # No 'vpath' search paths.
 
 # No general ('VPATH' variable) search path.
 
-# strcache buffers: 1 (0) / strings = 32 / storage = 305 B / avg = 9 B
-# current buf: size = 8162 B / used = 305 B / count = 32 / avg = 9 B
+# strcache buffers: 1 (0) / strings = 34 / storage = 310 B / avg = 9 B
+# current buf: size = 8162 B / used = 310 B / count = 34 / avg = 9 B
 
-# strcache performance: lookups = 79 / hit rate = 59%
+# strcache performance: lookups = 80 / hit rate = 57%
 # hash-table stats:
-# Load=32/8192=0%, Rehash=0, Collisions=1/79=1%
-# Finished Make data base on Sun May  1 03:45:22 2022
+# Load=34/8192=0%, Rehash=0, Collisions=1/80=1%
+# Finished Make data base on Sun May  1 01:08:10 2022
 
  

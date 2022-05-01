@@ -28,8 +28,10 @@ void ejecutarComandos(char *args[], int num_args, Config_Data *c, int *fdsocket)
 {
     char trama[LEN_TRAMA];
     char datos[LEN_DATOS];
-    pasarMinus(args[0]);
     char aux[LEN_TRAMA];
+    int num_bytes;
+
+    pasarMinus(args[0]);
     if (!strcmp(args[0], LOGIN))
     {
         if (num_args == LOGIN_ARG)
@@ -46,17 +48,17 @@ void ejecutarComandos(char *args[], int num_args, Config_Data *c, int *fdsocket)
                 datos[strlen(datos)] = '*';
                 strcat(datos, args[2]);
                 encapsulaTrama(MACHINE_NAME, 'C', datos, trama);
-                int n = send(*fdsocket, trama, LEN_TRAMA, 0);
-                printf("\n\nenviados---> n = %d\n\n", n);
-                int nbytes = read(*fdsocket, trama, LEN_TRAMA);
-                if (nbytes > 0)
+                num_bytes = send(*fdsocket, trama, LEN_TRAMA, 0);
+                printf("\n\nenviados---> n = %d\n\n", num_bytes);
+                num_bytes = read(*fdsocket, trama, LEN_TRAMA);
+                if (num_bytes)
                 {
                     if (trama[LEN_ORIGEN] == 'O')
                     {
                         extraeDatos(datos, trama);
-                        sprintf(aux, "Recibiendo: %s\n", datos);
+                        sprintf(aux, "Recibiendo O: %s\n", datos);
                         display(aux);
-                        printf("%s", trama);
+                        printf("trama: %s", trama);
                         conexionData = malloc(sizeof(Conexion));
                         conexionData->nombre = malloc(sizeof(char *));
                         conexionData->codigoPostal = malloc(sizeof(char *));
@@ -68,7 +70,7 @@ void ejecutarComandos(char *args[], int num_args, Config_Data *c, int *fdsocket)
                     if (trama[LEN_ORIGEN] == 'E')
                     {
                         extraeDatos(datos, trama);
-                        sprintf(aux, "Recibiendo: %s\n", datos);
+                        sprintf(aux, "Recibiendo E: %s\n", datos);
                         display(aux);
                     }
                 }
@@ -102,15 +104,24 @@ void ejecutarComandos(char *args[], int num_args, Config_Data *c, int *fdsocket)
                 int nbytes = read(*fdsocket, trama, LEN_TRAMA);
                 if (nbytes > 0)
                 {
-                    if (trama[LEN_ORIGEN] == 'S')
+                    if (trama[LEN_ORIGEN] == 'L')
                     {
                         // print listado de conexiones
                         extraeDatos(datos, trama);
                         sprintf(aux, "Recibiendo: %s\n", datos);
-                        display(aux);                       
+                        display(aux);
+                    }
+                    if (trama[LEN_ORIGEN] == 'K')
+                    {
+                        // print listado de conexiones
+                        extraeDatos(datos, trama);
+                        sprintf(aux, "La trama enviada contenia errors\n");
+                        display(aux);
                     }
                 }
-            }else {
+            }
+            else
+            {
                 display("NO ESTAS CONECTADO");
             }
         }
@@ -127,8 +138,32 @@ void ejecutarComandos(char *args[], int num_args, Config_Data *c, int *fdsocket)
     {
         if (num_args == SEND_ARG)
         {
-            display("COMANDA OK\n");
-            // DO SOMTHING
+            bzero(datos, LEN_DATOS);
+            strcat(datos, conexionData->nombre);
+            datos[strlen(datos)] = '*';
+            strcat(datos, conexionData->id);
+            datos[strlen(datos)] = '*';
+            strcat(datos, args[1]);
+            encapsulaTrama(MACHINE_NAME, 'S', datos, trama);       
+            send(*fdsocket, trama, LEN_TRAMA, 0);
+            int nbytes = read(*fdsocket, trama, LEN_TRAMA);
+            if (nbytes > 0)
+            {
+                if (trama[LEN_ORIGEN] == 'L')
+                {
+                    // print listado de conexiones
+                    extraeDatos(datos, trama);
+                    sprintf(aux, "Recibiendo: %s\n", datos);
+                    display(aux);
+                }
+                if (trama[LEN_ORIGEN] == 'K')
+                {
+                    // print listado de conexiones
+                    extraeDatos(datos, trama);
+                    sprintf(aux, "La trama enviada contenia errors\n");
+                    display(aux);
+                }
+            }
         }
         else if (num_args < SEND_ARG)
         {
@@ -159,8 +194,15 @@ void ejecutarComandos(char *args[], int num_args, Config_Data *c, int *fdsocket)
     {
         if (num_args == LOGOUT_ARG)
         {
-            display("COMANDA OK\n");
-            // DO SOMTHING
+            bzero(datos, LEN_DATOS);
+            strcat(datos, conexionData->nombre);
+            datos[strlen(datos)] = '*';
+            strcat(datos, conexionData->id);
+            datos[strlen(datos)] = '*';
+            strcat(datos, args[1]);
+            encapsulaTrama(MACHINE_NAME, 'Q', datos, trama);
+            send(*fdsocket, trama, LEN_TRAMA, 0);
+            raise(SIGINT);
         }
         else if (num_args > LOGOUT_ARG)
         {

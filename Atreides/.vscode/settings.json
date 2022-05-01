@@ -2,6 +2,7 @@
     "makefile.extensionOutputFolder": "./.vscode",
     "files.associations": {
         "mman.h": "c",
-        "conexiones.h": "c"
+        "conexiones.h": "c",
+        "ficheros.h": "c"
     }
 }

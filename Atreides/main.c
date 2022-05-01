@@ -7,7 +7,7 @@ void sigHandler(int signum)
 {
     if (signum == SIGINT)
     {
-        // liberarStructConfig_Data(&c);
+        //liberarStructConfig_Data(&c);
         if (*numConexiones > 0)
         {
             extraerConexiones(conexiones,numConexiones);
@@ -40,7 +40,7 @@ int main(int argc, char *argv[])
             signal(SIGINT, SIG_IGN);
             signal(SIGCHLD, SIG_IGN);
             close(sfd1);
-            atenderCliente(c, sfd2, conexiones, numConexiones, semaforo);
+            atenderCliente(sfd2, conexiones, numConexiones, semaforo);
             exit(0);
         default:
             close(sfd2);
@@ -48,3 +48,6 @@ int main(int argc, char *argv[])
     }
     return 0;
 }
+
+
+// desconecar todos los clientes al recieve ctrl+c or similar
