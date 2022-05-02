@@ -34,7 +34,7 @@ void extraerConexiones(Conexion *conexiones, int *numConexiones)
             conexiones[n].online = 0;
             write(fd, conexiones + n, sizeof(Conexion));
         }
-        //TODO
+        //TODO revisar
         munmap(conexiones,sizeof(conexiones)*MAX_CON);
         munmap(numConexiones,sizeof(int));
 

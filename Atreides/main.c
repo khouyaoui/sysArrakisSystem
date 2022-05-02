@@ -3,6 +3,13 @@
 #include "funciones.h"
 #include "conexiones.h"
 #include <semaphore.h>
+
+Config_Data c;
+Conexion *conexiones;
+int *numConexiones;
+
+sem_t *semaforo;
+
 void sigHandler(int signum)
 {
     if (signum == SIGINT)
@@ -12,6 +19,7 @@ void sigHandler(int signum)
         {
             extraerConexiones(conexiones,numConexiones);
         }
+        sem_destroy(semaforo);
         display(FINAL_MSG);
         exit(EXIT_SUCCESS);
     }
@@ -25,7 +33,7 @@ int main(int argc, char *argv[])
     signal(SIGINT, sigHandler);
     signal(SIGCHLD, SIG_IGN);
     int sfd1 = crearConexion(c.ip_server, atoi(c.port_server));
-    sem_t *semaforo = inicializarSemaforo();
+    semaforo = inicializarSemaforo();
     inicializarListaConexiones(&conexiones, &numConexiones);
     *numConexiones = cargarConexiones(conexiones);
     display(TERMINAL_PROMPT);    
@@ -37,7 +45,7 @@ int main(int argc, char *argv[])
         case -1:
             exit(-1);
         case 0:
-            signal(SIGINT, SIG_IGN);
+            signal(SIGINT, SIG_DFL);
             signal(SIGCHLD, SIG_IGN);
             close(sfd1);
             atenderCliente(sfd2, conexiones, numConexiones, semaforo);

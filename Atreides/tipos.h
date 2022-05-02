@@ -37,6 +37,7 @@
 #define FILE_NOT_OPEN_ERR "ERROR, no se pot obrir el fitxer\n"
 #define EMPTY_FILE_ERR "ERROR, el fitxer indicat esta buit\n"
 #define SOCKET_READ_ERR "ERROR, en la lectura del socket Accept\n"
+#include <semaphore.h>
 
 typedef struct {
     char *ip_server;
@@ -55,11 +56,6 @@ typedef struct
 {		     
   char nom[20];		
   int mida;			 
-  int checksum;			 
+  char checksum[32];			 
 } File;
-
-Config_Data c;
-Conexion *conexiones;
-int *numConexiones;
-int id;
 #endif
