@@ -28,7 +28,7 @@ void ejecutarComandos(char *args[], int num_args, Config_Data *c, int *fdsocket)
 {
     char trama[LEN_TRAMA];
     char datos[LEN_DATOS];
-    char aux[LEN_TRAMA];
+    char aux[MAX_STR];
     int num_bytes;
 
     pasarMinus(args[0]);
@@ -38,7 +38,7 @@ void ejecutarComandos(char *args[], int num_args, Config_Data *c, int *fdsocket)
         {
             if (*fdsocket > 0)
             {
-                display("CONEXIÓN ESTABLECIDA ANTERIORMENTE\n");
+                display("Connexió establerta anteriorment\n");
             }
             else
             {
@@ -48,17 +48,14 @@ void ejecutarComandos(char *args[], int num_args, Config_Data *c, int *fdsocket)
                 datos[strlen(datos)] = '*';
                 strcat(datos, args[2]);
                 encapsulaTrama(MACHINE_NAME, 'C', datos, trama);
-                num_bytes = send(*fdsocket, trama, LEN_TRAMA, 0);
-                printf("\n\nenviados---> n = %d\n\n", num_bytes);
+                num_bytes = write(*fdsocket, trama, LEN_TRAMA);
                 num_bytes = read(*fdsocket, trama, LEN_TRAMA);
                 if (num_bytes)
                 {
                     if (trama[LEN_ORIGEN] == 'O')
                     {
                         extraeDatos(datos, trama);
-                        sprintf(aux, "Recibiendo O: %s\n", datos);
-                        display(aux);
-                        printf("trama: %s", trama);
+                        // Pregunta: puede ser que los mallocs fueran sizeof(char) * tamaño
                         conexionData = malloc(sizeof(Conexion));
                         conexionData->nombre = malloc(sizeof(char *));
                         conexionData->codigoPostal = malloc(sizeof(char *));
@@ -66,6 +63,9 @@ void ejecutarComandos(char *args[], int num_args, Config_Data *c, int *fdsocket)
                         strcpy(conexionData->nombre, args[1]);
                         strcpy(conexionData->codigoPostal, args[2]);
                         strcpy(conexionData->id, datos);
+                        sprintf(aux, "Benvingut %s. Tens el ID %s\n", conexionData->nombre, conexionData->id);
+                        display(aux);
+                        display("Ara estàs connectat a Atreides\n");
                     }
                     if (trama[LEN_ORIGEN] == 'E')
                     {
@@ -98,18 +98,52 @@ void ejecutarComandos(char *args[], int num_args, Config_Data *c, int *fdsocket)
                 datos[strlen(datos)] = '*';
                 strcat(datos, args[1]);
                 encapsulaTrama(MACHINE_NAME, 'S', datos, trama);
-                display("COMANDA OK\n");
                 send(*fdsocket, trama, LEN_TRAMA, 0);
 
                 int nbytes = read(*fdsocket, trama, LEN_TRAMA);
                 if (nbytes > 0)
                 {
+                    extraeDatos(datos, trama);
                     if (trama[LEN_ORIGEN] == 'L')
                     {
                         // print listado de conexiones
-                        extraeDatos(datos, trama);
-                        sprintf(aux, "Recibiendo: %s\n", datos);
-                        display(aux);
+                        char *cadenaAUX;
+                        cadenaAUX = strtok(datos, "*");
+                        int count = atoi(cadenaAUX);
+                        if (count == 1)
+                        {
+                            sprintf(aux, "Hi ha una persona humana a %s\n", args[1]);
+                            display(aux);
+                            display("- ");
+                            cadenaAUX = strtok(NULL, "*");
+                            display(cadenaAUX);
+                            cadenaAUX = strtok(NULL, "*");
+                            display(" ");
+                            display(cadenaAUX);
+                            display("\n");
+                        }
+                        else if (count == 0)
+                        {
+                            sprintf(aux, "No hi ha cap persona humana a %s\n", args[1]);
+                            display(aux);
+                        }
+                        else
+                        {
+                            sprintf(aux, "Hi ha %d persones humanes a %s\n", count, args[1]);
+                            display(aux);
+                            for (int i = 0; i < count; i++)
+                            {
+                                display("- ");
+                                cadenaAUX = strtok(NULL, "*");
+                                display(cadenaAUX);
+                                cadenaAUX = strtok(NULL, "*");
+                                display(" ");
+                                display(cadenaAUX);
+                                display("\n");
+                                //cadenaAUX = strtok(NULL, "*");
+                            }
+                        }
+                    
                     }
                     if (trama[LEN_ORIGEN] == 'K')
                     {
@@ -138,16 +172,35 @@ void ejecutarComandos(char *args[], int num_args, Config_Data *c, int *fdsocket)
     {
         if (num_args == SEND_ARG)
         {
+            char hashAUX[HASH_LEL];
+            unsigned char buffer[LEN_TRAMA];
+            int num_bytes, num_bytes2, fd_img, fd_bin;
+            fd_img = open("./imagen_test_2.jpg", O_RDONLY);
+            fd_bin = open("./imagen_bin.jpg", O_WRONLY);
+
+            while ((num_bytes = read(fd_img, buffer, LEN_TRAMA)) > 0)
+            {
+                printf("1) num_bytes image = %d\n", num_bytes);
+                if (num_bytes > 0)
+                {
+                    num_bytes2 = write(fd_bin, buffer, num_bytes);
+                    printf("2) num_bytes2 binario = %d\n", num_bytes2);
+                }
+            }
+            // primera trama a enviar !!
             bzero(datos, LEN_DATOS);
-            strcat(datos, conexionData->nombre);
-            datos[strlen(datos)] = '*';
-            strcat(datos, conexionData->id);
-            datos[strlen(datos)] = '*';
             strcat(datos, args[1]);
-            encapsulaTrama(MACHINE_NAME, 'S', datos, trama);       
-            send(*fdsocket, trama, LEN_TRAMA, 0);
-            int nbytes = read(*fdsocket, trama, LEN_TRAMA);
-            if (nbytes > 0)
+            strcat(datos, "*");
+            strcat(datos, "345");
+            strcat(datos, "*");
+            calcularHash(hashAUX, args[1]);
+            strcat(datos, hashAUX);
+            encapsulaTrama(MACHINE_NAME, 'F', datos, trama);
+            write(*fdsocket, trama, LEN_TRAMA);
+            //
+            num_bytes = read(*fdsocket, trama, LEN_TRAMA);
+            // tramas de datos img ...
+            if (num_bytes > 0)
             {
                 if (trama[LEN_ORIGEN] == 'L')
                 {

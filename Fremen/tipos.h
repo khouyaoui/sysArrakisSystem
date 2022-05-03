@@ -2,6 +2,7 @@
 #define TIPOS_H
 
 // Zona de CONSTANTES
+#define HASH_LEL 32
 #define MAX_STR 512
 #define NUM_ARG 2
 #define LOGIN "login"
@@ -22,7 +23,7 @@
 #define PORT_RANGE_ERR "ERROR, el rango del puerto es invalido\n"
 #define MACHINE_NAME "FREMEN"
 // Mensajes
-#define INIT_MSG "\nBenvingut a Fremen\n"
+#define INIT_MSG "\nBenvingut a Fremen"
 #define LOGOUT_MSG "\nDesconectat d'Atreides. Dew!\n"
 #define DIR_EMPTY_ERR "No hi ha fitxers disponibles\n"
 #define TERMINAL_PROMPT "\n$ "

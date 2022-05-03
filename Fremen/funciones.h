@@ -56,4 +56,8 @@ void pasarMinus(char *frase);
 
 void encapsulaTrama(char *origen, char tipo, char *datos, char *trama);
 
+char *obtenerMidaIMG();
+
+void calcularHash(char *hash, char *fileName);
+
 #endif

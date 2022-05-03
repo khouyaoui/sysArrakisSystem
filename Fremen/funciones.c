@@ -1,7 +1,8 @@
 #include "funciones.h"
 
 // ----------------------------------  FREE Y APUNTAR A NULL  ----------------------------------
-void liberarMemoria(void *ptr) {
+void liberarMemoria(void *ptr)
+{
     // Libermaos Memoria
     free(ptr);
     // Dejamos apuntando a NULL
@@ -9,25 +10,31 @@ void liberarMemoria(void *ptr) {
 }
 
 // ----------------------------------  CONTROLAR PASO DE ARGUMENTOS  ----------------------------------
-void errorNumArgumentos(int argc) {
-    if (argc != NUM_ARG) {
+void errorNumArgumentos(int argc)
+{
+    if (argc != NUM_ARG)
+    {
         display(ARG_NUMBER_ERR);
         exit(EXIT_FAILURE);
     }
 }
 
 // ----------------------------------  CONTROLAR OBERTURA FICHERO  ----------------------------------
-void errorAbrirFichero(int fd) {
-    if (fd < 0) {
+void errorAbrirFichero(int fd)
+{
+    if (fd < 0)
+    {
         display(FILE_NOT_OPEN_ERR);
         exit(EXIT_FAILURE);
     }
 }
 
 // ----------------------------------  CONTROLAR FICHERO VACIO  -------------------------------------
-void errorFicheroVacio(int fd) {
+void errorFicheroVacio(int fd)
+{
     char precheck;
-    if (read(fd, &precheck, 1) <= 0) {
+    if (read(fd, &precheck, 1) <= 0)
+    {
         display(EMPTY_FILE_ERR);
         close(fd);
         exit(EXIT_FAILURE);
@@ -37,19 +44,23 @@ void errorFicheroVacio(int fd) {
 }
 
 // ----------------------------------  MOSTRAR POR PANTALLA  ----------------------------------
-void display(char *string) {
+void display(char *string)
+{
     write(1, string, sizeof(char) * strlen(string));
 }
 
 // ----------------------------------  LEER PALABRA FICHERO  ----------------------------------
-char *readUntil(int fd, char end) {
+char *readUntil(int fd, char end)
+{
     int i = 0;
     char c = '\0';
     char *string = (char *)malloc(sizeof(char));
 
-    while (c != end) {
+    while (c != end)
+    {
         read(fd, &c, sizeof(char));
-        if (c != end) {
+        if (c != end)
+        {
             string = (char *)realloc(string, sizeof(char) * (i + 2));
             string[i] = c;
         }
@@ -61,13 +72,15 @@ char *readUntil(int fd, char end) {
 }
 
 // ----------------------------------  LEER CADENA TECLADO  ----------------------------------
-char *readInput() {
+char *readInput()
+{
     int i = 0;
     char *string = NULL;
-    char caracter = ' ';  // Caracter neutro
+    char caracter = ' '; // Caracter neutro
 
     // Bucle para leer caracteres entrados por teclado hasta Enter
-    while (caracter != '\n') {
+    while (caracter != '\n')
+    {
         // Lectura de caracter por caracter
         read(0, &caracter, sizeof(char));
 
@@ -78,7 +91,8 @@ char *readInput() {
         string[i] = caracter;
 
         // Cuando el caracter sea un salto de linea (enter) marcamos el fianl de la cadena
-        if (caracter == '\n') {
+        if (caracter == '\n')
+        {
             string[i] = '\0';
         }
         i++;
@@ -87,13 +101,15 @@ char *readInput() {
 }
 
 // ----------------------------------  EXTRAER PALABRAS DE UNA FRASE  ----------------------------------
-char *extraerPalabra(char ***string, int *i) {
+char *extraerPalabra(char ***string, int *i)
+{
     int j = 0;
     // char *aux = NULL;
     char *palabra = NULL;
 
     // Bucle para recorrer el string hasta el final '\0'
-    while ((**string)[*i] != '\0' && (**string)[*i] != ' ') {
+    while ((**string)[*i] != '\0' && (**string)[*i] != ' ')
+    {
         palabra = (char *)realloc(palabra, (sizeof(char *) * (j + 1)));
         palabra[j] = (**string)[*i];
         *i = *i + 1;
@@ -108,35 +124,43 @@ char *extraerPalabra(char ***string, int *i) {
 }
 
 // ----------------------------------  CONTAR PALABRAS DE UNA FRASE  ----------------------------------
-int contarPalabras(char ***string) {
+int contarPalabras(char ***string)
+{
     int i = 0;
     int num_palabras = 1;
     int anterior_espacio = 0;
 
     // Bucle para recorrer el string hasta el final '\0'
-    while ((**string)[i] != '\0') {
-        if ((**string)[i] == ' ' && !anterior_espacio) {
+    while ((**string)[i] != '\0')
+    {
+        if ((**string)[i] == ' ' && !anterior_espacio)
+        {
             num_palabras++;
             anterior_espacio = 1;
         }
-        if ((**string)[i] != ' ') anterior_espacio = 0;
+        if ((**string)[i] != ' ')
+            anterior_espacio = 0;
         i++;
     }
     return num_palabras;
 }
 
 // ----------------------------------  PASAR FRASE AINUS  ----------------------------------
-void pasarMinus(char *frase) {
+void pasarMinus(char *frase)
+{
     int i = 0;
-    while (frase[i] != '\0') {
-        if (frase[i] >= 'A' && frase[i] <= 'Z') {
+    while (frase[i] != '\0')
+    {
+        if (frase[i] >= 'A' && frase[i] <= 'Z')
+        {
             frase[i] = frase[i] - 'A' + 'a';
         }
         i++;
     }
 }
 
-void encapsulaTrama(char *origen, char tipo, char *datos, char *trama) {
+void encapsulaTrama(char *origen, char tipo, char *datos, char *trama)
+{
     int j, i = LEN_ORIGEN + 1;
     int length = strlen(datos);
 
@@ -144,26 +168,30 @@ void encapsulaTrama(char *origen, char tipo, char *datos, char *trama) {
     strcat(trama, origen);
     trama[LEN_ORIGEN] = tipo;
 
-    for (j = 0; j < length; j++) {
+    for (j = 0; j < length; j++)
+    {
         trama[i] = datos[j];
         i++;
     }
 }
 
-
 // ----------------------------------  CONTROLAR ERROR READ  ----------------------------------
-void errorReadSocket(int num_bytes) {
-    if (num_bytes < 0) {
+void errorReadSocket(int num_bytes)
+{
+    if (num_bytes < 0)
+    {
         display(SOCKET_READ_ERR);
         raise(SIGINT);
     }
 }
-uint16_t controlaPuerto(char *user_port) {
+uint16_t controlaPuerto(char *user_port)
+{
 
     // Rango Puerto valido
     uint16_t port;
     int aux = atoi(user_port);
-    if (aux < MIN_PORT_RANGE || aux > MAX_PORT_RANGE) {
+    if (aux < MIN_PORT_RANGE || aux > MAX_PORT_RANGE)
+    {
         display(PORT_RANGE_ERR);
         raise(SIGINT);
     }
@@ -173,3 +201,39 @@ uint16_t controlaPuerto(char *user_port) {
 
     return port;
 }
+
+char *obtenerMidaIMG()
+{
+    char *len = "090";
+    return len;
+}
+
+void calcularHash(char *hash, char *fileName)
+{
+    int child_status;
+    int canals[2];
+    if (pipe(canals) == -1)
+        exit(-1);
+    int ret = fork();
+    switch (ret)
+    {
+    case 0:
+        dup2(canals[1], STDOUT_FILENO);
+        close(canals[0]);
+        close(canals[1]);
+        execl("/usr/bin/md5sum", "md5sum", fileName, (char *)NULL);
+        exit(0);
+        break;
+    case -1:
+        write(0, "Error fork calcularHash funciones.c", strlen("Error fork calcularHash funciones.c"));
+        break;
+    default:
+        waitpid(ret, &child_status, 0);
+        close(canals[1]);
+        int nbytes = read(canals[0], hash, 32);
+        close(canals[0]);
+        break;
+    }
+}
+
+ 

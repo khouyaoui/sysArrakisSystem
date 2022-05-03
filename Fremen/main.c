@@ -20,6 +20,8 @@ int main(int argc, char *argv[]) {
     errorNumArgumentos(argc);
     readConfig(argv[1], &c);
     signal(SIGINT, sigHandler);
+
+    display(INIT_MSG);
     for (;;) {
         display(TERMINAL_PROMPT);
         input = readInput();
