@@ -95,8 +95,6 @@ void esperarConexiones(Config_Data *c)
     }
 }
 
-
-
 // ----------------------------------  CONTROLAR ERROR READ  ----------------------------------
 void errorReadSocket(int num_bytes)
 {
@@ -187,7 +185,7 @@ void tratarComandaSearch(int sfd2, char *trama, char *datos, Conexion *conexione
     cadena = strtok(NULL, "*");
     char codigoPostal[10];
     strcpy(codigoPostal, cadena);
-    sprintf(aux, "Rebut search %s de %s %d\n", codigoPostal, conexion->nom, conexion->id);
+    sprintf(aux, "Rebut search per el codi postal %s de %s amb id %d\n", codigoPostal, conexion->nom, conexion->id);
     display(aux);
     display("Feta la cerca\n");
     bzero(datos, LEN_DATOS);
@@ -242,4 +240,50 @@ int buscarPorCodigoPostal(char *codigoPostal, Conexion *conexiones, int *numCone
         }
     }
     return count;
+}
+
+void tratarComandasFiles(int sfd2, char *trama, char *datos, Conexion *conexiones, int *numConexiones, Conexion *conexion)
+{
+    if (trama[LEN_ORIGEN] == 'F')
+    {
+        char *cadena;
+        char hashAUX[HASH_LEL];
+        File *file = malloc(sizeof(File));
+        calcularHash(hashAUX, "ATREIDES.exe");
+        extraeDatos(datos, trama);
+        cadena = strtok(datos, "*");
+        strcpy(file->nom, cadena);
+        cadena = strtok(NULL, "*");
+        file->mida = atoi(cadena);
+        cadena = strtok(NULL, "*");
+        strcpy(file->hash, cadena);
+        fprintf(stdout, "\n %s\n %d\n %s\n NUEVO HASH %s\n", file->hash, file->mida, file->nom, hashAUX);
+    }
+}
+void calcularHash(char *hash, char *fileName)
+{
+    int child_status;
+    int canals[2];
+    if (pipe(canals) == -1)
+        exit(-1);
+    int ret = fork();
+    switch (ret)
+    {
+    case 0:
+        dup2(canals[1], STDOUT_FILENO);
+        close(canals[0]);
+        close(canals[1]);
+        execl("/usr/bin/md5sum", "md5sum", fileName, (char *)NULL);
+        exit(0);
+        break;
+    case -1:
+        write(0, "Error fork calcularHash funciones.c", strlen("Error fork calcularHash funciones.c"));
+        break;
+    default:
+        waitpid(ret, &child_status, 0);
+        close(canals[1]);
+        int nbytes = read(canals[0], hash, 32);
+        close(canals[0]);
+        break;
+    }
 }

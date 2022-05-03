@@ -139,11 +139,8 @@ void desconectarCliente(Conexion *conexiones, int *numConexiones, int id)
 
 void gestionarTrama(int sfd2, char *trama, Conexion *conexiones, sem_t *semaforo, int *numConexiones, Conexion **conexion)
 {
-    File *file;
     char datos[LEN_DATOS];
-    // int count;
     char aux[MAX_STR];
-    char *cadena;
     switch (trama[LEN_ORIGEN])
     {
     case 'C':
@@ -179,15 +176,8 @@ void gestionarTrama(int sfd2, char *trama, Conexion *conexiones, sem_t *semaforo
         _exit(0);
         break;
     case 'F':
-        file = malloc(sizeof(File));
-        extraeDatos(datos, trama);
-        cadena = strtok(datos, "*");
-        strcpy(file->nom, cadena);
-        cadena = strtok(NULL, "*");
-        file->mida = atoi(cadena);
-        cadena = strtok(NULL, "*");
-
-        write(0, datos, LEN_DATOS);
+    case 'D':
+        tratarComandasFiles(sfd2, trama, datos, conexiones, numConexiones, *conexion);
         break;
     default:
         printf("ERROR trama Z\n\n");
