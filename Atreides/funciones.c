@@ -192,15 +192,15 @@ void tratarComandaSearch(int sfd2, char *trama, char *datos, Conexion *conexione
     int count = buscarPorCodigoPostal(codigoPostal, conexiones, numConexiones);
     if (count == 1)
     {
-        sprintf(aux, "Hi ha una persona humana a %s\n", conexion->codigoPostal);
+        sprintf(aux, "Hi ha una persona humana a %s\n", codigoPostal);
     }
     else if (count == 0)
     {
-        sprintf(aux, "No hi ha cap persona humana a %s\n", conexion->codigoPostal);
+        sprintf(aux, "No hi ha cap persona humana a %s\n", codigoPostal);
     }
     else
     {
-        sprintf(aux, "Hi ha %d persones humanes a %s\n", count, conexion->codigoPostal);
+        sprintf(aux, "Hi ha %d persones humanes a %s\n", count, codigoPostal);
     }
     display(aux);
     if (count > 0)
@@ -224,6 +224,8 @@ void tratarComandaSearch(int sfd2, char *trama, char *datos, Conexion *conexione
             }
         }
         free(auxID);
+    }else {
+        sprintf(datos, "%d*", "0");
     }
     encapsulaTrama(MACHINE_NAME, 'L', datos, trama);
     write(sfd2, trama, LEN_TRAMA);
