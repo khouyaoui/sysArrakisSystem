@@ -125,7 +125,7 @@ uint16_t controlaPuerto(char *user_port)
 
     return port;
 }
-
+// -------------  PEDIR MEMORIA COMPARTIDA PARA LA LISTA DE CONEXIONES  ------------------------
 sem_t *inicializarSemaforo()
 {
     sem_t *semaforo = mmap(NULL, sizeof(sem_t), PROT_READ | PROT_WRITE, MAP_ANON | MAP_SHARED, -1, 0);
@@ -137,4 +137,109 @@ sem_t *inicializarSemaforo()
     sem_init(semaforo, 1, 1);
     sem_post(semaforo);
     return semaforo;
+}
+// --------------------------  TRATAR LA COMANDA LOGIN  -----------------------------------------
+Conexion *tratarNuevaConexion(char *trama, Conexion *conexiones, int *numConexiones)
+{
+    char *login = trama + 16;
+    char *aux;
+    for (aux = login; *aux != '*'; aux++)
+        ;
+
+    // he assumit que la trama és correcta
+    *aux = 0;
+    char *cp = aux + 1;
+    // assumim que després del codi postal hi ha tot \0
+    // assumim qeu numConexiones és un int *
+    return recuperarConexion(login, cp, conexiones, numConexiones);
+}
+// -------------------  RECUPERAR UNA CONEXION DESDE LA LISTA  ------------------------------------
+Conexion *recuperarConexion(char *login, char *cp, Conexion *conexiones, int *numConexiones)
+{
+    // assumeixo que no tinc ni NULL ni valors negatius
+    for (int i = 0; i < *numConexiones; i++)
+        if (strcmp(login, conexiones[i].nom) == 0)
+        {
+            conexiones[i].online = 1;
+            strcpy(conexiones[i].codigoPostal, cp);
+            return conexiones + i;
+        }
+    // si hem arribat aquí, és que no està a la llista
+    // i si no queda lloc per al nou usuari?
+    if (*numConexiones == MAX_CON)
+        return NULL;
+    // sí queda lloc per al nou usuari
+    strcpy(conexiones[*numConexiones].nom, login);
+    strcpy(conexiones[*numConexiones].codigoPostal, cp);
+    conexiones[*numConexiones].id = 1000 + *numConexiones;
+    conexiones[*numConexiones].online = 1;
+    (*numConexiones)++;
+    return conexiones + *numConexiones - 1;
+}
+// ---------------------------  TRATAR LA COMANDA SEARCH  ----------------------------------------
+void tratarComandaSearch(int sfd2, char *trama, char *datos, Conexion *conexiones, int *numConexiones, Conexion *conexion)
+{
+    char *cadena;
+    char aux[MAX_STR];
+    extraeDatos(datos, trama);
+    cadena = strtok(datos, "*");
+    cadena = strtok(NULL, "*");
+    cadena = strtok(NULL, "*");
+    char codigoPostal[10];
+    strcpy(codigoPostal, cadena);
+    sprintf(aux, "Rebut search %s de %s %d\n", codigoPostal, conexion->nom, conexion->id);
+    display(aux);
+    display("Feta la cerca\n");
+    bzero(datos, LEN_DATOS);
+    int count = buscarPorCodigoPostal(codigoPostal, conexiones, numConexiones);
+    if (count == 1)
+    {
+        sprintf(aux, "Hi ha una persona humana a %s\n", conexion->codigoPostal);
+    }
+    else if (count == 0)
+    {
+        sprintf(aux, "No hi ha cap persona humana a %s\n", conexion->codigoPostal);
+    }
+    else
+    {
+        sprintf(aux, "Hi ha %d persones humanes a %s\n", count, conexion->codigoPostal);
+    }
+    display(aux);
+    if (count > 0)
+    {
+        char *auxID = malloc(sizeof(char));
+        sprintf(datos, "%d*", count);
+        for (int i = 0; i < *numConexiones && i < LEN_DATOS; i++)
+        {
+            if (0 == strcmp(conexiones[i].codigoPostal, codigoPostal))
+            {
+                sprintf(aux, "- %d %s\n", conexiones[i].id, conexiones[i].nom);
+                display(aux);
+                strcat(datos, conexiones[i].nom);
+                strcat(datos, "*");
+                sprintf(auxID, "%d", conexiones[i].id);
+                strcat(datos, auxID);
+                if (i < count && i < (int)strlen(datos))
+                {
+                    strcat(datos, "*");
+                }
+            }
+        }
+        free(auxID);
+    }
+    encapsulaTrama(MACHINE_NAME, 'L', datos, trama);
+    write(sfd2, trama, LEN_TRAMA);
+}
+// -----------------------  BUSCAR EN LA LISTA SEGUN PARAMENTRO DE ENTRADA --------------------------
+int buscarPorCodigoPostal(char *codigoPostal, Conexion *conexiones, int *numConexiones)
+{
+    int count = 0;
+    for (int i = 0; i < *numConexiones; i++)
+    {
+        if (0 == strcmp(conexiones[i].codigoPostal, codigoPostal))
+        {
+            count++;
+        }
+    }
+    return count;
 }

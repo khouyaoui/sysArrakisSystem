@@ -35,7 +35,7 @@
 #include <sys/mman.h> 
 // ----------------------------------  Librerias PROPIAS  ----------------------------------
 #include "tipos.h"
-
+#include "sockets.h"
 void liberarMemoria(void *ptr);
 
 void errorNumArgumentos(int argc);
@@ -55,5 +55,13 @@ uint16_t controlaPuerto(char *user_port);
 void errorReadSocket(int num_bytes);
 
 sem_t *inicializarSemaforo();
+
+int buscarPorCodigoPostal(char *codigoPostal,Conexion *conexiones, int *numConexiones); 
+
+Conexion * recuperarConexion(char *login, char *cp, Conexion *conexiones, int *numConexiones);
+
+Conexion *tratarNuevaConexion(char *trama,Conexion *conexiones, int *numConexiones);
+
+void tratarComandaSearch(int sfd2, char *trama, char *datos, Conexion *conexiones, int *numConexiones, Conexion *conexion);
 
 #endif

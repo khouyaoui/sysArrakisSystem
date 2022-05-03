@@ -3,10 +3,10 @@ all: ATREIDES
 main.o: main.c funciones.h sockets.c tipos.h conexiones.h
 	gcc -c -pthread -g main.c -Wall -Wextra
 
-funciones.o: funciones.c funciones.h tipos.h
+funciones.o: funciones.c funciones.h tipos.h sockets.h
 	gcc -c -g funciones.c -Wall -Wextra
 
-conexiones.o: conexiones.c conexiones.h tipos.h sockets.h ficheros.h
+conexiones.o: conexiones.c conexiones.h tipos.h sockets.h ficheros.h funciones.h
 	gcc -c -g conexiones.c -Wall -Wextra
 
 ficheros.o: ficheros.c ficheros.h tipos.h
