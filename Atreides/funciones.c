@@ -224,7 +224,9 @@ void tratarComandaSearch(int sfd2, char *trama, char *datos, Conexion *conexione
             }
         }
         free(auxID);
-    }else {
+    }
+    else
+    {
         sprintf(datos, "%d*", "0");
     }
     encapsulaTrama(MACHINE_NAME, 'L', datos, trama);
@@ -260,6 +262,14 @@ void tratarComandasFiles(int sfd2, char *trama, char *datos, Conexion *conexione
         cadena = strtok(NULL, "*");
         strcpy(file->hash, cadena);
         fprintf(stdout, "\n %s\n %d\n %s\n NUEVO HASH %s\n", file->hash, file->mida, file->nom, hashAUX);
+    }
+    if (trama[LEN_ORIGEN] == 'D')
+    {
+        write(0, "\nrebuda trama Data\n", strlen("\nrebuda trama Data\n"));
+        extraeDatosBinarios(datos, trama);
+        int fd_bin = open("./imagen_bin.jpg", O_WRONLY | O_APPEND | O_CREAT, 0666);
+        int num_bytes2 = write(fd_bin, datos, LEN_DATOS);
+        printf("2) num_bytes2 binario = %d\n", num_bytes2);
     }
 }
 void calcularHash(char *hash, char *fileName)

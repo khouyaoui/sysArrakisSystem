@@ -94,3 +94,12 @@ void encapsulaTrama(char *origen, char tipo, char *datos, char *trama)
         i++;
     }
 }
+
+void extraeDatosBinarios(char *datos, char *trama) {
+    int i, j = 0;
+
+    for (i = LEN_ORIGEN + 1; i < LEN_TRAMA; ++i) {
+        datos[j] = trama[i];
+        j++;
+    }
+}
