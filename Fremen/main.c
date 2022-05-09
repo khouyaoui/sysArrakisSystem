@@ -12,7 +12,9 @@ void sigHandler(int signum) {
         exit(EXIT_SUCCESS);
     }
 }
-
+void handleSIGPIPE(){
+    printf("\n343434344334\n");
+}
 int main(int argc, char *argv[]) {
     char *input = NULL;
     int fdsocket = 0;
@@ -20,7 +22,7 @@ int main(int argc, char *argv[]) {
     errorNumArgumentos(argc);
     readConfig(argv[1], &c);
     signal(SIGINT, sigHandler);
-
+    signal(SIGPIPE,handleSIGPIPE);
     display(INIT_MSG);
     for (;;) {
         display(TERMINAL_PROMPT);

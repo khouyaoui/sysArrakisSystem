@@ -36,7 +36,7 @@ int main(int argc, char *argv[])
     semaforo = inicializarSemaforo();
     inicializarListaConexiones(&conexiones, &numConexiones);
     *numConexiones = cargarConexiones(conexiones);
-    display(TERMINAL_PROMPT);    
+    display(TERMINAL_PROMPT);  
     for (;;)
     {
         int sfd2 = aceptarConexion(sfd1);
@@ -48,7 +48,7 @@ int main(int argc, char *argv[])
             signal(SIGINT, SIG_DFL);
             signal(SIGCHLD, SIG_IGN);
             close(sfd1);
-            atenderCliente(sfd2, conexiones, numConexiones, semaforo);
+            atenderCliente(&c,sfd2, conexiones, numConexiones, semaforo);
             exit(0);
         default:
             close(sfd2);

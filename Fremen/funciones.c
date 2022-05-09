@@ -1,3 +1,4 @@
+#define _GNU_SOURCE
 #include "funciones.h"
 
 // ----------------------------------  FREE Y APUNTAR A NULL  ----------------------------------
@@ -186,7 +187,6 @@ void errorReadSocket(int num_bytes)
 }
 uint16_t controlaPuerto(char *user_port)
 {
-
     // Rango Puerto valido
     uint16_t port;
     int aux = atoi(user_port);
@@ -200,12 +200,6 @@ uint16_t controlaPuerto(char *user_port)
     port = aux;
 
     return port;
-}
-
-char *obtenerMidaIMG()
-{
-    char *len = "090";
-    return len;
 }
 
 void calcularHash(char *hash, char *fileName)
@@ -230,10 +224,143 @@ void calcularHash(char *hash, char *fileName)
     default:
         waitpid(ret, &child_status, 0);
         close(canals[1]);
-        int nbytes = read(canals[0], hash, 32);
+        // int nbytes = read(canals[0], hash, 32);
+        read(canals[0], hash, 32);
         close(canals[0]);
         break;
     }
 }
 
- 
+void encapsulaTramaBinaria(char *origen, char tipo, char *datos, char *trama)
+{
+    int j, i = LEN_ORIGEN + 1;
+    bzero(trama, LEN_TRAMA);
+    strcat(trama, origen);
+    trama[LEN_ORIGEN] = tipo;
+
+    for (j = 0; j < LEN_DATOS; j++)
+    {
+        trama[i] = datos[j];
+        i++;
+    }
+}
+
+int calcularMida(int fd)
+{
+    struct stat st;
+    fstat(fd, &st);
+    return (int)st.st_size;
+}
+// TODO revisar
+void crearFichero(int ID, char *directorio, File **file, char *trama)
+{
+    *file = malloc(sizeof(File));
+    asprintf(&((*file)->nom), "%s/%d.jpg", directorio, ID); // calcular memoria i demanarla -> familia sprintf // fa el malloc
+    // .jpg
+    char *aux = trama + 16;
+    for (; *aux != '*'; aux++)
+        ;
+    char *mida = aux + 1;
+    for (aux++; *aux != '*'; aux++)
+        ;
+    *aux = 0;
+    (*file)->mida = atoi(mida);
+    memcpy((*file)->hash, aux + 1, HASH_LEN);
+    (*file)->fd = open((*file)->nom, O_WRONLY | O_CREAT | O_TRUNC, 0666);
+    if ((*file)->fd < 0)
+    {
+        // enviar trama de error
+        //  fer frees
+    }
+}
+// TODO revisar
+void leerDatosIMG(int sfd, File **imagen, char *trama)
+{
+    while ((*imagen)->mida != 0)
+    {
+        read(sfd, trama, LEN_TRAMA);
+        if ((*imagen)->mida >= LEN_DATOS)
+        {
+            write((*imagen)->fd, trama + 16, LEN_DATOS);
+            (*imagen)->mida -= LEN_DATOS;
+        }
+        else
+        {
+            write((*imagen)->fd, trama + 16, (*imagen)->mida);
+            (*imagen)->mida = 0;
+        }
+        if ((*imagen)->mida == 0)
+        {
+            close((*imagen)->fd);
+            char downloadedHash[32];
+            calcularHash(downloadedHash, (*imagen)->nom);
+            if (0 == memcmp(downloadedHash, (*imagen)->hash, 32))
+            {
+                encapsulaTrama(MACHINE_NAME, 'I', "IMAGE OK", trama);
+                write(sfd, trama, LEN_TRAMA);
+            }
+            else
+            {
+                encapsulaTrama(MACHINE_NAME, 'R', "“IMAGE KO", trama);
+                write(sfd, trama, LEN_TRAMA);
+            }           
+        }
+    }
+    free((*imagen)->nom);
+    free((*imagen));
+}
+
+int validarNomImagen(char nomImagen[])
+{
+    for (int i = 0; i < (int)strlen(nomImagen); i++)
+    {
+        if (!isdigit(nomImagen[i]))
+        {
+            return -1;
+        }
+    }
+    return 0;
+}
+int ocultarDirectorios(const struct dirent *arg)
+{
+    // Para que no nos devuelva el directorio actual (.) y el anterior (..)
+    if (strcmp(arg->d_name, ".") == 0 || strcmp(arg->d_name, "..") == 0)
+    {
+        return 0;
+    }
+    return 1;
+}
+int existePhoto(char *photo_id,char *directorio)
+{
+    int i, num_archivos;
+    struct dirent **archivos;
+    num_archivos = scandir(directorio, &archivos, ocultarDirectorios, alphasort);
+
+    if (num_archivos <= 0)
+    {
+        display(DIR_EMPTY_ERR);
+    }
+    else
+    {
+        for (i = 0; i < num_archivos; i++)
+        {
+            // Identificamos el tipo de archivo segun la extension
+            archivos[i]->d_type = archivos[i]->d_name[strlen(archivos[i]->d_name) - 1];
+            if (archivos[i]->d_type == 'g')
+            {
+                if (!strcmp(archivos[i]->d_name, photo_id))
+                {
+                    // calcu
+                    return 1;
+                }
+            }
+        }
+        // FREE de cada elemento del Struct dirent
+        for (i = 0; i < num_archivos; i++)
+        {
+            liberarMemoria(archivos[i]);
+        }
+        liberarMemoria(archivos);
+    }
+    return 0;
+}

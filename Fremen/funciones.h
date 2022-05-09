@@ -30,7 +30,9 @@
 #include <stdint.h>      // type uint16_t
 #include <sys/socket.h>  // int socket(), connect(), struct sockaddr_in
 //#include <netinet/in.h>
-
+#include <sys/stat.h>
+//isgidit
+#include <ctype.h>
 // ----------------------------------  Librerias PROPIAS  ----------------------------------
 #include "tipos.h"
 
@@ -56,8 +58,20 @@ void pasarMinus(char *frase);
 
 void encapsulaTrama(char *origen, char tipo, char *datos, char *trama);
 
-char *obtenerMidaIMG();
-
 void calcularHash(char *hash, char *fileName);
+
+void encapsulaTramaBinaria(char *origen, char tipo, char *datos, char *trama);
+
+int calcularMida(int fd);
+
+void crearFichero(int ID, char *directorio, File **file, char *trama);
+
+void leerDatosIMG(int sfd, File **file, char *trama);
+
+int validarNomImagen(char nomImagen[]);
+
+int ocultarDirectorios(const struct dirent *arg);
+
+int existePhoto(char *photo_id,char *directorio);
 
 #endif

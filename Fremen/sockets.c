@@ -15,12 +15,12 @@ int establecerConexion(Config_Data *c) {
 
     if ((he = gethostbyname(c->ip_server)) == NULL) {
         display("client error en gethostbyname\n");
-        exit(-1);
+        return -1;
     }
 
     if ((sockfd = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
         display("client error en abrir socket client\n");
-        exit(-1);
+        return -1;
     }
 
     server.sin_family = AF_INET;
@@ -28,8 +28,8 @@ int establecerConexion(Config_Data *c) {
     server.sin_addr = *((struct in_addr *)he->h_addr);
 
     if (connect(sockfd, (struct sockaddr *)&server, sizeof(server)) == -1) {
-        display("client error en abrir socket connect\n");
-        exit(-1);
+        display("No s'ha pogut trobar el servidor\n");
+        return -1;
     } else {
         return sockfd;
     }
@@ -54,4 +54,13 @@ void extraeDatos(char *datos, char *trama) {
         j++;
     }
     datos[j] = '\0';
+}
+
+void extraeDatosBinarios(char *datos, char *trama) {
+    int i, j = 0;
+
+    for (i = LEN_ORIGEN + 1; i < LEN_TRAMA; ++i) {
+        datos[j] = trama[i];
+        j++;
+    }
 }

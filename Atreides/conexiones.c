@@ -1,3 +1,4 @@
+#define _GNU_SOURCE
 #include "conexiones.h"
 int inicializarListaConexiones(Conexion **conexiones, int **numConexiones)
 {
@@ -22,7 +23,6 @@ int inicializarListaConexiones(Conexion **conexiones, int **numConexiones)
     return 1;
 }
 
- 
 Conexion *obtenirConexion(int id, Conexion *conexiones, int *numConexiones)
 {
     Conexion *conexion;
@@ -89,11 +89,12 @@ void printConexiones(Conexion *conexiones, int *numConexiones)
     }
 }
 
-int atenderCliente(int sfd2, Conexion *conexiones, int *numConexiones, sem_t *semaforo)
+int atenderCliente(Config_Data *c, int sfd2, Conexion *conexiones, int *numConexiones, sem_t *semaforo)
 {
     char trama[LEN_TRAMA] = {0};
     int contador = 0;
     Conexion *conexion = NULL;
+    File *file = NULL;
     while (1)
     {
         bzero(trama, LEN_TRAMA);
@@ -106,7 +107,7 @@ int atenderCliente(int sfd2, Conexion *conexiones, int *numConexiones, sem_t *se
             {
                 desconectarCliente(conexiones, numConexiones, conexion->id);
             }
-            // printf("ctrl+c detected from client\n");
+            display(TERMINAL_PROMPT);
             _exit(0);
         }
         else
@@ -116,14 +117,14 @@ int atenderCliente(int sfd2, Conexion *conexiones, int *numConexiones, sem_t *se
         if (contador == sizeof(trama))
         {
             // tenim una trama sencera
-            gestionarTrama(sfd2, trama, conexiones, semaforo, numConexiones, &conexion);
+            gestionarTrama(c, sfd2, trama, conexiones, semaforo, numConexiones, &conexion, &file);
             contador = 0;
         }
-        display(TERMINAL_PROMPT);
     }
 }
 void desconectarCliente(Conexion *conexiones, int *numConexiones, int id)
 {
+
     for (int i = 0; i < *numConexiones; i++)
     {
         if (conexiones[i].id == id)
@@ -132,15 +133,13 @@ void desconectarCliente(Conexion *conexiones, int *numConexiones, int id)
             display(conexiones[i].nom);
         }
     }
+
     display(" Desconnectat d’Atreides.\n");
-    display(TERMINAL_PROMPT);
-    // printConexiones(conexiones, numConexiones);
 }
 
-void gestionarTrama(int sfd2, char *trama, Conexion *conexiones, sem_t *semaforo, int *numConexiones, Conexion **conexion)
+void gestionarTrama(Config_Data *c, int sfd2, char *trama, Conexion *conexiones, sem_t *semaforo, int *numConexiones, Conexion **conexion, File **file)
 {
-    char datos[LEN_DATOS];
-    char aux[MAX_STR];
+    char datos[LEN_DATOS], aux[MAX_STR];
     switch (trama[LEN_ORIGEN])
     {
     case 'C':
@@ -148,23 +147,29 @@ void gestionarTrama(int sfd2, char *trama, Conexion *conexiones, sem_t *semaforo
         *conexion = tratarNuevaConexion(trama, conexiones, numConexiones);
         sem_post(semaforo);
 
-        // TODO si *conexion es null cal enviar una trama d'error, esta definida a
+        // No s'ha pogut assignar id per connectar-se
         if (*conexion == NULL)
         {
-            // enviar trama d'error & exit 0
+            encapsulaTrama(MACHINE_NAME, 'E', "ERROR", trama);
+            write(sfd2, trama, LEN_TRAMA);
         }
-        sprintf(aux, "\nRebut login %s %s\n", (*conexion)->nom, (*conexion)->codigoPostal);
-        display(aux);
-        sprintf(aux, "Assignat a ID %d.\nEnviada resposta\n\n", (*conexion)->id);
-        display(aux);
-        sprintf(datos, "%d", (*conexion)->id);
-        encapsulaTrama(MACHINE_NAME, 'O', datos, trama);
-        write(sfd2, trama, LEN_TRAMA);
+        else
+        {
+            sprintf(aux, "Rebut login %s %s\n", (*conexion)->nom, (*conexion)->codigoPostal);
+            display(aux);
+            sprintf(aux, "Assignat a ID %d.\nEnviada resposta\n", (*conexion)->id);
+            display(aux);
+            sprintf(datos, "%d", (*conexion)->id);
+            encapsulaTrama(MACHINE_NAME, 'O', datos, trama);
+            write(sfd2, trama, LEN_TRAMA);
+            display(TERMINAL_PROMPT);
+        }
         break;
     case 'S':
         sem_wait(semaforo);
         tratarComandaSearch(sfd2, trama, datos, conexiones, numConexiones, *conexion);
         sem_post(semaforo);
+        display(TERMINAL_PROMPT);
         break;
     case 'Q':
         if (*conexion != NULL)
@@ -173,16 +178,58 @@ void gestionarTrama(int sfd2, char *trama, Conexion *conexiones, sem_t *semaforo
             display(aux);
             desconectarCliente(conexiones, numConexiones, (*conexion)->id);
         }
+        display(TERMINAL_PROMPT);
         _exit(0);
         break;
     case 'F':
+        display(aux);
+        char *nomImatge = NULL;
+        crearFichero((*conexion)->id, c->directorio, file, trama, &nomImatge);
+        sprintf(aux, "Rebut send %s de %s %d\n", nomImatge, (*conexion)->nom, (*conexion)->id);
+        display(aux);
+        sprintf(aux, "Guardada com %d.jpg\n", (*conexion)->id);
+        display(aux);
+        // hacer el free de nomImatge
+        display(TERMINAL_PROMPT);
+        break;
     case 'D':
-        tratarComandasFiles(sfd2, trama, datos, conexiones, numConexiones, *conexion);
+        leerDatosIMG(sfd2, *file, trama);
+        break;
+    case 'P':
+        bzero(datos, LEN_DATOS);
+        extraeDatos(datos, trama);
+        sprintf(aux, "Rebut photo %s de %s %d\n", datos, (*conexion)->nom, (*conexion)->id);
+        display(aux);
+        if (existePhoto(datos))
+        {
+            // fer-ho amb un forks per si rebem altres tramas
+            sprintf(aux, "Enviament %s\n", datos);
+            display(aux);
+            File *imagen = NULL;
+            abrirImagen(atoi(datos), c->directorio, &imagen);
+            enviarImagen(sfd2, datos, &imagen, trama, aux);
+            display("Enviada resposta\n");
+        }
+        else
+        {
+            display("\nNo hi ha foto registrada.\n");
+            display("\nEnviada resposta\n");
+            bzero(trama, LEN_TRAMA);
+            encapsulaTrama(MACHINE_NAME, 'F', "FILE NOT FOUND", trama);
+            write(sfd2, trama, LEN_TRAMA);
+        }
+        display(TERMINAL_PROMPT);
+        break;
+    case 'I':
+        display("ii");
+        break;
+    case 'R':
+        display("error");
         break;
     default:
-        printf("ERROR trama Z\n\n");
-        encapsulaTrama(MACHINE_NAME, 'Z', "“ERROR DE TRAMA”", trama);
+        encapsulaTrama(MACHINE_NAME, 'Z', "ERROR T", trama);
         write(sfd2, trama, LEN_TRAMA);
+        display(TERMINAL_PROMPT);
         // desconexion
     }
 }

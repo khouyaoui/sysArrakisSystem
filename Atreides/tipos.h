@@ -4,7 +4,7 @@
 // Zona de CONSTANTES
 #define MAX_PORT_RANGE 65535
 #define MIN_PORT_RANGE 1
-#define HASH_LEL 32
+#define HASH_LEN 32
 #define MAX_CON 50
 #define MAX_STR 512
 #define NUM_ARG 2
@@ -23,7 +23,7 @@
 #define LEN_TRAMA 256
 #define LEN_DATOS 240
 // Mensajes
-#define MACHINE_NAME "ATRAIDES"
+#define MACHINE_NAME "ATREIDES"
 #define INIT_MSG "\nSERVIDOR ATREIDES\nLlegit el fitxer de configuració\n"
 #define LOGOUT_MSG "\nDesconectat d'Atreides. Dew!\n"
 #define DIR_EMPTY_ERR "No hi ha fitxers disponibles\n"
@@ -53,8 +53,9 @@ typedef struct
 
 typedef struct
 {		     
-  char nom[20];		
+  char *nom;		
   int mida;			 
-  char hash[32];			 
+  char hash[32];
+  int fd;			 
 } File;
 #endif

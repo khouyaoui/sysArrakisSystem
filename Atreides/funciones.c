@@ -1,5 +1,5 @@
+#define _GNU_SOURCE
 #include "funciones.h"
-
 // ----------------------------------  FREE Y APUNTAR A NULL  ----------------------------------
 void liberarMemoria(void *ptr)
 {
@@ -108,7 +108,6 @@ void errorReadSocket(int num_bytes)
 // ----------------------------------  CONTROLAR PURTO VALIDO  --------------------------------
 uint16_t controlaPuerto(char *user_port)
 {
-
     // Rango Puerto valido
     uint16_t port;
     int aux = atoi(user_port);
@@ -227,7 +226,7 @@ void tratarComandaSearch(int sfd2, char *trama, char *datos, Conexion *conexione
     }
     else
     {
-        sprintf(datos, "%d*", "0");
+        sprintf(datos, "%d*", 0);
     }
     encapsulaTrama(MACHINE_NAME, 'L', datos, trama);
     write(sfd2, trama, LEN_TRAMA);
@@ -245,14 +244,12 @@ int buscarPorCodigoPostal(char *codigoPostal, Conexion *conexiones, int *numCone
     }
     return count;
 }
-
-void tratarComandasFiles(int sfd2, char *trama, char *datos, Conexion *conexiones, int *numConexiones, Conexion *conexion)
+/*
+void tratarComandasFiles(Config_Data *c,int sfd2, char *trama, char *datos, Conexion *conexiones, int *numConexiones, Conexion *conexion,File *file)
 {
-    if (trama[LEN_ORIGEN] == 'F')
-    {
         char *cadena;
         char hashAUX[HASH_LEL];
-        File *file = malloc(sizeof(File));
+
         calcularHash(hashAUX, "ATREIDES.exe");
         extraeDatos(datos, trama);
         cadena = strtok(datos, "*");
@@ -262,16 +259,8 @@ void tratarComandasFiles(int sfd2, char *trama, char *datos, Conexion *conexione
         cadena = strtok(NULL, "*");
         strcpy(file->hash, cadena);
         fprintf(stdout, "\n %s\n %d\n %s\n NUEVO HASH %s\n", file->hash, file->mida, file->nom, hashAUX);
-    }
-    if (trama[LEN_ORIGEN] == 'D')
-    {
-        write(0, "\nrebuda trama Data\n", strlen("\nrebuda trama Data\n"));
-        extraeDatosBinarios(datos, trama);
-        int fd_bin = open("./imagen_bin.jpg", O_WRONLY | O_APPEND | O_CREAT, 0666);
-        int num_bytes2 = write(fd_bin, datos, LEN_DATOS);
-        printf("2) num_bytes2 binario = %d\n", num_bytes2);
-    }
 }
+*/
 void calcularHash(char *hash, char *fileName)
 {
     int child_status;
@@ -294,8 +283,196 @@ void calcularHash(char *hash, char *fileName)
     default:
         waitpid(ret, &child_status, 0);
         close(canals[1]);
-        int nbytes = read(canals[0], hash, 32);
+        // int nbytes = read(canals[0], hash, 32);
+        read(canals[0], hash, 32);
         close(canals[0]);
         break;
+    }
+}
+
+int calcularMida(int fd)
+{
+    struct stat st;
+    fstat(fd, &st);
+    return (int)st.st_size;
+}
+
+void crearFichero(int ID, char *directorio, File **file, char *trama, char **nomImatge)
+{
+    *file = malloc(sizeof(File));
+    asprintf(&((*file)->nom), "%s/%d.jpg", directorio, ID); // calcular memoria i demanarla -> familia sprintf // fa el malloc
+
+    // .jpg
+    *nomImatge = malloc(sizeof(char *));
+    char *aux = trama + 16;
+    for (; *aux != '*'; aux++)
+        ;
+
+    char *mida = aux + 1;
+    for (aux++; *aux != '*'; aux++)
+        ;
+    *aux = 0;
+    (*file)->mida = atoi(mida);
+    memcpy((*file)->hash, aux + 1, HASH_LEN);
+    (*file)->fd = open((*file)->nom, O_WRONLY | O_CREAT | O_TRUNC, 0666);
+    if ((*file)->fd < 0)
+    {
+        display("\nerror fdfd\n");
+        // enviar trama de error
+        //  fer frees
+    }
+    (*nomImatge) = strtok(trama + 16, "*");
+}
+
+void abrirImagen(int ID, char *directorio, File **file)
+{
+    *file = malloc(sizeof(File));
+    char hashAUX[32];
+    asprintf(&((*file)->nom), "%s/%d.jpg", directorio, ID); // calcular memoria i demanarla -> familia sprintf // fa el malloc
+    (*file)->fd = open((*file)->nom, O_RDONLY);
+    (*file)->mida = calcularMida((*file)->fd);
+    calcularHash(hashAUX, (*file)->nom);
+    asprintf(&((*file)->nom), "%d.jpg", ID); // calcular memoria i demanarla -> familia sprintf // fa el malloc
+    memcpy((*file)->hash, hashAUX, 32);
+    if ((*file)->fd < 0)
+    {
+        display("\nerror fdfd\n");
+        // enviar trama de error
+        //  fer frees
+    }
+}
+
+void leerDatosIMG(int sfd, File *file, char *trama)
+{
+    if (file->mida >= LEN_DATOS)
+    {
+        write(file->fd, trama + 16, LEN_DATOS);
+        file->mida -= LEN_DATOS;
+    }
+    else
+    {
+        write(file->fd, trama + 16, file->mida);
+        file->mida = 0;
+    }
+    if (file->mida == 0)
+    {
+        close(file->fd);
+        char downloadedHash[32];
+        calcularHash(downloadedHash, file->nom);
+        if (0 == memcmp(downloadedHash, file->hash, 32))
+        {
+            encapsulaTrama(MACHINE_NAME, 'I', "IMAGE OK", trama);
+            write(sfd, trama, LEN_TRAMA);
+        }
+        else
+        {
+            encapsulaTrama(MACHINE_NAME, 'R', "“IMAGE KO", trama);
+            write(sfd, trama, LEN_TRAMA);
+        }
+        free(file->nom);
+        free(file);
+    }
+}
+
+int ocultarDirectorios(const struct dirent *arg)
+{
+    // Para que no nos devuelva el directorio actual (.) y el anterior (..)
+    if (strcmp(arg->d_name, ".") == 0 || strcmp(arg->d_name, "..") == 0)
+    {
+        return 0;
+    }
+    return 1;
+}
+
+int existePhoto(char *photo_id)
+{
+    int i, num_archivos;
+    struct dirent **archivos;
+    strcat(photo_id, ".jpg");
+    num_archivos = scandir("./Directorio", &archivos, ocultarDirectorios, alphasort);
+
+    if (num_archivos <= 0)
+    {
+        display(DIR_EMPTY_ERR);
+    }
+    else
+    {
+        for (i = 0; i < num_archivos; i++)
+        {
+            // Identificamos el tipo de archivo segun la extension
+            archivos[i]->d_type = archivos[i]->d_name[strlen(archivos[i]->d_name) - 1];
+            if (archivos[i]->d_type == 'g')
+            {
+                if (!strcmp(archivos[i]->d_name, photo_id))
+                {
+                    // calcu
+                    return 1;
+                }
+            }
+        }
+        // FREE de cada elemento del Struct dirent
+        for (i = 0; i < num_archivos; i++)
+        {
+            liberarMemoria(archivos[i]);
+        }
+        liberarMemoria(archivos);
+    }
+    return 0;
+}
+
+void encapsulaTramaBinaria(char *origen, char tipo, char *datos, char *trama)
+{
+    int j, i = LEN_ORIGEN + 1;
+    bzero(trama, LEN_TRAMA);
+    strcat(trama, origen);
+    trama[LEN_ORIGEN] = tipo;
+
+    for (j = 0; j < LEN_DATOS; j++)
+    {
+        trama[i] = datos[j];
+        i++;
+    }
+}
+
+void enviarImagen(int sfd2, char *datos, File **imagen, char *trama, char *aux)
+{
+    if ((*imagen)->fd > 0)
+    {
+        bzero(datos, LEN_DATOS);
+        strcat(datos, (*imagen)->nom);
+        strcat(datos, "*");
+        sprintf(aux, "%d", (*imagen)->mida);
+        strcat(datos, aux);
+        strcat(datos, "*");
+        strcat(datos, (*imagen)->hash);
+        bzero(trama, LEN_TRAMA);
+        encapsulaTrama(MACHINE_NAME, 'F', datos, trama);
+        // enviamos la cabezera de la imagen: mida md5 nom
+        write(sfd2, trama, LEN_TRAMA);
+
+        while ((*imagen)->mida != 0)
+        {
+            if ((*imagen)->mida >= LEN_DATOS)
+            {
+                read((*imagen)->fd, datos, LEN_DATOS);
+                encapsulaTramaBinaria(MACHINE_NAME, 'D', datos, trama);
+                write(sfd2, trama, LEN_TRAMA);
+                (*imagen)->mida -= LEN_DATOS;
+            }
+            else
+            {
+                // ultim troç d'imatge enviat !
+                read((*imagen)->fd, datos, (*imagen)->mida);
+                encapsulaTramaBinaria(MACHINE_NAME, 'D', datos, trama);
+                write(sfd2, trama, LEN_TRAMA);
+                (*imagen)->mida = 0;
+            }
+            if ((*imagen)->mida == 0)
+            {
+                close((*imagen)->fd);
+                // free((*imagen)->nom);
+                // free(imagen);
+            }
+        }
     }
 }

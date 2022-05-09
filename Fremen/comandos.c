@@ -30,7 +30,13 @@ void ejecutarComandos(char *args[], int num_args, Config_Data *c, int *fdsocket)
     char datos[LEN_DATOS];
     char aux[MAX_STR];
     int num_bytes;
+/*
+    int error_code;
+    int error_code_size = sizeof(error_code);
+    int r = getsockopt(*fdsocket, SOL_SOCKET, SO_ERROR, &error_code, &error_code_size);
 
+    printf("\n%d   %d   %d\n",error_code,error_code_size,(int)r);
+*/
     pasarMinus(args[0]);
     if (!strcmp(args[0], LOGIN))
     {
@@ -140,10 +146,9 @@ void ejecutarComandos(char *args[], int num_args, Config_Data *c, int *fdsocket)
                                 display(" ");
                                 display(cadenaAUX);
                                 display("\n");
-                                //cadenaAUX = strtok(NULL, "*");
+                                // cadenaAUX = strtok(NULL, "*");
                             }
                         }
-                    
                     }
                     if (trama[LEN_ORIGEN] == 'K')
                     {
@@ -152,6 +157,10 @@ void ejecutarComandos(char *args[], int num_args, Config_Data *c, int *fdsocket)
                         sprintf(aux, "La trama enviada contenia errors\n");
                         display(aux);
                     }
+                }
+                else
+                {
+                    *fdsocket = 0;
                 }
             }
             else
@@ -170,52 +179,77 @@ void ejecutarComandos(char *args[], int num_args, Config_Data *c, int *fdsocket)
     }
     else if (!strcmp(args[0], SEND))
     {
+        bzero(trama, LEN_TRAMA);
+        bzero(datos, LEN_DATOS);
         if (num_args == SEND_ARG)
         {
-            char hashAUX[HASH_LEL];
-            unsigned char buffer[LEN_TRAMA];
-            int num_bytes, num_bytes2, fd_img, fd_bin;
-            fd_img = open("./imagen_test_2.jpg", O_RDONLY);
-            fd_bin = open("./imagen_bin.jpg", O_WRONLY);
-
-            while ((num_bytes = read(fd_img, buffer, LEN_TRAMA)) > 0)
+            if (*fdsocket > 0)
             {
-                printf("1) num_bytes image = %d\n", num_bytes);
-                if (num_bytes > 0)
+                if (existePhoto(args[1], c->directorio))
                 {
-                    num_bytes2 = write(fd_bin, buffer, num_bytes);
-                    printf("2) num_bytes2 binario = %d\n", num_bytes2);
+                    char hashAUX[HASH_LEN];
+                    int num_bytes = 0, fd_img = 0;
+                    sprintf(aux, "%s/%s", c->directorio, args[1]);
+                    fd_img = open(aux, O_RDONLY);
+                    if (fd_img < 0)
+                    {
+                        display("\nError al obrir l'arxiu a enviar\n");
+                    }
+                    else
+                    {
+                        // primera trama a enviar !!
+                        bzero(datos, LEN_DATOS);
+                        strcat(datos, args[1]);
+                        strcat(datos, "*");
+                        char auxMida[20];
+                        sprintf(auxMida, "%d", calcularMida(fd_img));
+                        strcat(datos, auxMida);
+                        strcat(datos, "*");
+                        calcularHash(hashAUX, aux);
+                        strcat(datos, hashAUX);
+                        encapsulaTrama(MACHINE_NAME, 'F', datos, trama);
+                        write(*fdsocket, trama, LEN_TRAMA);
+                        //
+                        // enviar tramas de datos
+                        //
+                        while ((num_bytes = read(fd_img, datos, LEN_DATOS)) > 0)
+                        {
+                            if (num_bytes > 0)
+                            {
+                                encapsulaTramaBinaria(MACHINE_NAME, 'D', datos, trama);
+                                write(*fdsocket, trama, LEN_TRAMA);
+                                bzero(datos, LEN_DATOS);
+                            }
+                        }
+                        // read respuesta
+                        num_bytes = read(*fdsocket, trama, LEN_TRAMA);
+                        extraeDatos(datos, trama);
+                        // tramas de datos img ...
+                        if (num_bytes > 0)
+                        {
+                            if (0 == strcmp(datos, "IMAGE OK"))
+                            {
+                                display("Foto enviada amb èxit a Atreides.\n");
+                            }
+                            if (0 == strcmp(datos, "IMAGE KO"))
+                            {
+                                display("Error durant l'enviament d'imatge");
+                            }
+                        }
+                        else
+                        {
+                            *fdsocket = 0; // server desconnected
+                        }
+                    }
+                }
+                else
+                {
+                    display("No hi ha foto registrada per enviar");
                 }
             }
-            // primera trama a enviar !!
-            bzero(datos, LEN_DATOS);
-            strcat(datos, args[1]);
-            strcat(datos, "*");
-            strcat(datos, "345");
-            strcat(datos, "*");
-            calcularHash(hashAUX, args[1]);
-            strcat(datos, hashAUX);
-            encapsulaTrama(MACHINE_NAME, 'F', datos, trama);
-            write(*fdsocket, trama, LEN_TRAMA);
-            //
-            num_bytes = read(*fdsocket, trama, LEN_TRAMA);
-            // tramas de datos img ...
-            if (num_bytes > 0)
+            else
             {
-                if (trama[LEN_ORIGEN] == 'L')
-                {
-                    // print listado de conexiones
-                    extraeDatos(datos, trama);
-                    sprintf(aux, "Recibiendo: %s\n", datos);
-                    display(aux);
-                }
-                if (trama[LEN_ORIGEN] == 'K')
-                {
-                    // print listado de conexiones
-                    extraeDatos(datos, trama);
-                    sprintf(aux, "La trama enviada contenia errors\n");
-                    display(aux);
-                }
+                display("NO ESTAS CONECTADO");
             }
         }
         else if (num_args < SEND_ARG)
@@ -231,8 +265,42 @@ void ejecutarComandos(char *args[], int num_args, Config_Data *c, int *fdsocket)
     {
         if (num_args == PHOTO_ARG)
         {
-            display("COMANDA OK\n");
-            // DO SOMTHING
+            if (0 == validarNomImagen(args[1]))
+            {
+                if (*fdsocket > 0)
+                {
+                    File *imagen = NULL;
+                    bzero(datos, LEN_DATOS);
+                    strcat(datos, args[1]);
+                    encapsulaTrama(MACHINE_NAME, 'P', datos, trama);
+                    // enviar solicitud de imagen
+                    write(*fdsocket, trama, LEN_TRAMA);
+                    // leer primera respuesta, si existe o no
+                    int num_bytes = read(*fdsocket, trama, LEN_TRAMA);
+                    if (num_bytes == 0)
+                    { // server desconectado !
+                        *fdsocket = 0;
+                    }
+                    if (trama[LEN_ORIGEN] == 'F' && 0 == strcmp("FILE NOT FOUND", trama + 16)) // imatge no trobada
+                    {
+                        display("\nNo hi ha foto registrada :(\n");
+                    }
+                    else
+                    {
+                        crearFichero(atoi(args[1]), c->directorio, &imagen, trama);
+                        leerDatosIMG(*fdsocket, &imagen, trama);
+                        display("\nFoto descarregada :)\n");
+                    }
+                }
+                else
+                {
+                    display("NO ESTAS CONECTADO");
+                }
+            }
+            else
+            {
+                display("ESTE NOMBRE DE IMAGEN NO ES VALIDO\n");
+            }
         }
         else if (num_args < PHOTO_ARG)
         {
@@ -254,7 +322,11 @@ void ejecutarComandos(char *args[], int num_args, Config_Data *c, int *fdsocket)
             datos[strlen(datos)] = '*';
             strcat(datos, args[1]);
             encapsulaTrama(MACHINE_NAME, 'Q', datos, trama);
-            send(*fdsocket, trama, LEN_TRAMA, 0);
+            int num_bytes = write(*fdsocket, trama, LEN_TRAMA);
+            if (num_bytes == 0)
+            {
+                *fdsocket = 0;
+            }
             raise(SIGINT);
         }
         else if (num_args > LOGOUT_ARG)
@@ -295,7 +367,6 @@ void gestionarComandos(char **input, Config_Data *c, int *fdsocket)
             i++;
         }
     }
-
     ejecutarComandos(comandos, num_comandos, c, fdsocket);
     for (l = 0; l < num_comandos; l++)
     {

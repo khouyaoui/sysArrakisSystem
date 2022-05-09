@@ -20,9 +20,9 @@ int existeConexion(int id, Conexion *conexiones, int *numConexiones, char *nomNo
 
 void printConexiones(Conexion *conexiones,int *numConexiones);
 
-int atenderCliente(int sfd2,Conexion *conexiones,int *numConexiones,sem_t *semaforo);
+int atenderCliente(Config_Data *c, int sfd2,Conexion *conexiones,int *numConexiones,sem_t *semaforo);
 
-void gestionarTrama(int sfd2, char *trama, Conexion *conexiones, sem_t *semaforo, int *numConexiones, Conexion **conexion);
+void gestionarTrama(Config_Data *c,int sfd2, char *trama, Conexion *conexiones, sem_t *semaforo, int *numConexiones, Conexion **conexion,File **f);
 
 void desconectarCliente(Conexion *conexiones,int* numConexiones,int id);
 

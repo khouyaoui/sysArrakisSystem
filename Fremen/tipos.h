@@ -2,7 +2,7 @@
 #define TIPOS_H
 
 // Zona de CONSTANTES
-#define HASH_LEL 32
+#define HASH_LEN 32
 #define MAX_STR 512
 #define NUM_ARG 2
 #define LOGIN "login"
@@ -47,5 +47,13 @@ typedef struct {
     char *port_server;
     char *directorio;
 } Config_Data;
+
+typedef struct
+{
+    char *nom;
+    int mida;
+    char hash[32];
+    int fd;
+} File;
 
 #endif

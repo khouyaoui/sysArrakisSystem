@@ -15,4 +15,6 @@ int establecerConexion(Config_Data *c);
 
 void extraeDatos(char *datos, char *trama);
 
+void extraeDatosBinarios(char *datos, char *trama);
+
 #endif

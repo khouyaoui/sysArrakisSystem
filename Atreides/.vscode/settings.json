@@ -4,6 +4,8 @@
         "mman.h": "c",
         "conexiones.h": "c",
         "ficheros.h": "c",
-        "semaphore.h": "c"
+        "semaphore.h": "c",
+        "tipos.h": "c",
+        "stdio.h": "c"
     }
 }

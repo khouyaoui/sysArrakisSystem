@@ -32,10 +32,12 @@
 //#include <netinet/in.h>
 
 #include <semaphore.h>
-#include <sys/mman.h> 
+#include <stdio.h>
+#include <sys/mman.h>
+#include <sys/stat.h>
 // ----------------------------------  Librerias PROPIAS  ----------------------------------
-#include "tipos.h"
 #include "sockets.h"
+#include "tipos.h"
 void liberarMemoria(void *ptr);
 
 void errorNumArgumentos(int argc);
@@ -56,16 +58,29 @@ void errorReadSocket(int num_bytes);
 
 sem_t *inicializarSemaforo();
 
-int buscarPorCodigoPostal(char *codigoPostal,Conexion *conexiones, int *numConexiones); 
+int buscarPorCodigoPostal(char *codigoPostal, Conexion *conexiones, int *numConexiones);
 
-Conexion * recuperarConexion(char *login, char *cp, Conexion *conexiones, int *numConexiones);
+Conexion *recuperarConexion(char *login, char *cp, Conexion *conexiones, int *numConexiones);
 
-Conexion *tratarNuevaConexion(char *trama,Conexion *conexiones, int *numConexiones);
+Conexion *tratarNuevaConexion(char *trama, Conexion *conexiones, int *numConexiones);
 
 void tratarComandaSearch(int sfd2, char *trama, char *datos, Conexion *conexiones, int *numConexiones, Conexion *conexion);
 
-void tratarComandasFiles(int sfd2, char *trama, char *datos, Conexion *conexiones, int *numConexiones, Conexion *conexion);
+// void tratarComandasFiles(int sfd2, char *trama, char *datos, Conexion *conexiones, int *numConexiones, Conexion *conexion);
 
 void calcularHash(char *hash, char *fileName);
 
+int calcularMida(int fd);
+
+void crearFichero(int ID, char *directorio, File **file, char *trama,char **nomImatge);
+
+void abrirImagen(int ID, char *directorio, File **file);
+
+void leerDatosIMG(int sfd, File *file, char *trama);
+
+int existePhoto(char *photo_id);
+
+void encapsulaTramaBinaria(char *origen, char tipo, char *datos, char *trama);
+
+void enviarImagen(int sfd2, char *datos, File **imagen,char* trama,char *aux);
 #endif
