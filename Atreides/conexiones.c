@@ -198,12 +198,12 @@ void gestionarTrama(Config_Data *c, int sfd2, char *trama, Conexion *conexiones,
     case 'P':
         bzero(datos, LEN_DATOS);
         extraeDatos(datos, trama);
-        sprintf(aux, "Rebut photo %s de %s %d\n", datos, (*conexion)->nom, (*conexion)->id);
+        sprintf(aux, "Rebut photo %s de %s %d", datos, (*conexion)->nom, (*conexion)->id);
         display(aux);
         if (existePhoto(datos))
         {
             // fer-ho amb un forks per si rebem altres tramas
-            sprintf(aux, "Enviament %s\n", datos);
+            sprintf(aux, "\nEnviament %s\n", datos);
             display(aux);
             File *imagen = NULL;
             abrirImagen(atoi(datos), c->directorio, &imagen);
@@ -212,7 +212,7 @@ void gestionarTrama(Config_Data *c, int sfd2, char *trama, Conexion *conexiones,
         }
         else
         {
-            display("\nNo hi ha foto registrada.\n");
+            display("\nNo hi ha foto registrada.");
             display("\nEnviada resposta\n");
             bzero(trama, LEN_TRAMA);
             encapsulaTrama(MACHINE_NAME, 'F', "FILE NOT FOUND", trama);
