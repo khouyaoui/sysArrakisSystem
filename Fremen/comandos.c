@@ -24,19 +24,17 @@ void ejecutarShell(char *args[], int num_args)
     }
 }
 
+
+
 void ejecutarComandos(char *args[], int num_args, Config_Data *c, int *fdsocket)
 {
     char trama[LEN_TRAMA];
     char datos[LEN_DATOS];
     char aux[MAX_STR];
     int num_bytes;
-/*
-    int error_code;
-    int error_code_size = sizeof(error_code);
-    int r = getsockopt(*fdsocket, SOL_SOCKET, SO_ERROR, &error_code, &error_code_size);
 
-    printf("\n%d   %d   %d\n",error_code,error_code_size,(int)r);
-*/
+    
+
     pasarMinus(args[0]);
     if (!strcmp(args[0], LOGIN))
     {
@@ -158,10 +156,6 @@ void ejecutarComandos(char *args[], int num_args, Config_Data *c, int *fdsocket)
                         display(aux);
                     }
                 }
-                else
-                {
-                    *fdsocket = 0;
-                }
             }
             else
             {
@@ -236,10 +230,7 @@ void ejecutarComandos(char *args[], int num_args, Config_Data *c, int *fdsocket)
                                 display("Error durant l'enviament d'imatge");
                             }
                         }
-                        else
-                        {
-                            *fdsocket = 0; // server desconnected
-                        }
+                        
                     }
                 }
                 else
@@ -276,11 +267,8 @@ void ejecutarComandos(char *args[], int num_args, Config_Data *c, int *fdsocket)
                     // enviar solicitud de imagen
                     write(*fdsocket, trama, LEN_TRAMA);
                     // leer primera respuesta, si existe o no
-                    int num_bytes = read(*fdsocket, trama, LEN_TRAMA);
-                    if (num_bytes == 0)
-                    { // server desconectado !
-                        *fdsocket = 0;
-                    }
+                    read(*fdsocket, trama, LEN_TRAMA);
+                     
                     if (trama[LEN_ORIGEN] == 'F' && 0 == strcmp("FILE NOT FOUND", trama + 16)) // imatge no trobada
                     {
                         display("\nNo hi ha foto registrada :(\n");
@@ -322,11 +310,8 @@ void ejecutarComandos(char *args[], int num_args, Config_Data *c, int *fdsocket)
             datos[strlen(datos)] = '*';
             strcat(datos, args[1]);
             encapsulaTrama(MACHINE_NAME, 'Q', datos, trama);
-            int num_bytes = write(*fdsocket, trama, LEN_TRAMA);
-            if (num_bytes == 0)
-            {
-                *fdsocket = 0;
-            }
+            write(*fdsocket, trama, LEN_TRAMA);
+             
             raise(SIGINT);
         }
         else if (num_args > LOGOUT_ARG)
@@ -367,6 +352,7 @@ void gestionarComandos(char **input, Config_Data *c, int *fdsocket)
             i++;
         }
     }
+    
     ejecutarComandos(comandos, num_comandos, c, fdsocket);
     for (l = 0; l < num_comandos; l++)
     {

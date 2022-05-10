@@ -4,6 +4,7 @@
         "sockets.h": "c",
         "netdb.h": "c",
         "funciones.h": "c",
-        "typeinfo": "c"
+        "typeinfo": "c",
+        "ficheros.h": "c"
     }
 }
