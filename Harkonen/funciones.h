@@ -1,20 +1,12 @@
 #ifndef FUNCIONES_H
 #define FUNCIONES_H
 
-// ----------------------------------  Librerias GENERALES del sistema  ----------------------------------
-// Output
-#include <stdio.h>  // sprintf
-//#include <sys/types.h>  //  pthread_t, size_t
-
-// Ficheros
-#include <fcntl.h>   // Modos de opertura : O_RDONLY
-#include <unistd.h>  // read, write, open, close. execlp
-#include <string.h>
+#include <stdio.h>
+#include <unistd.h> 
 #include <stdlib.h> 
-
-// Signals
-#include <signal.h>    // Signals
-#include <sys/wait.h>  // wait
+#include <time.h>
+#include <string.h>
+#include <signal.h>
 #include <ctype.h>
 #include "tipos.h"
 

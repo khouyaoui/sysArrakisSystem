@@ -33,13 +33,32 @@ int validarArgumento(char arg[])
 
 void limpiarArrakisSystem()
 {
+    // 20% mata ATREIDES
+    // 80% mata a Fremen
+    srand(time(0));
     char aux[STRBUF];
     char result[STRBUF];
-    FILE *pipeCMD = popen("pidof -s ATREIDES.exe", "r");
+    int n = rand() % 120;
+
+    FILE *pipeCMD;
+    if (n >= 100)
+    {
+        pipeCMD = popen("pidof -s ATREIDES.exe", "r");
+    }
+    else
+    {
+        pipeCMD = popen("pidof -s Fremen.exe", "r");
+    }
+    // no puc usar fgets
     fgets(result, STRBUF, pipeCMD);
     pid_t pid = strtoul(result, NULL, 10);
-    sprintf(aux,"killing pid %d\n",pid);
-    display(aux);
-    kill(pid,SIGINT);
+    if (pid > 0)
+    {
+        sprintf(aux, "killing pid %d\n", pid);
+        display(aux);
+        kill(pid,SIGINT);
+        pid = 0;
+        bzero(result,STRBUF);
+    }
     pclose(pipeCMD);
 }
