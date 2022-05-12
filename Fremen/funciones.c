@@ -73,7 +73,7 @@ char *readUntil(int fd, char end)
 }
 
 // ----------------------------------  LEER CADENA TECLADO  ----------------------------------
-char *readInput()
+char *readInput(void)
 {
     int i = 0;
     char *string = NULL;
@@ -184,22 +184,6 @@ void errorReadSocket(int num_bytes)
         display(SOCKET_READ_ERR);
         raise(SIGINT);
     }
-}
-uint16_t controlaPuerto(char *user_port)
-{
-    // Rango Puerto valido
-    uint16_t port;
-    int aux = atoi(user_port);
-    if (aux < MIN_PORT_RANGE || aux > MAX_PORT_RANGE)
-    {
-        display(PORT_RANGE_ERR);
-        raise(SIGINT);
-    }
-
-    // Si el puerto es valido lo asignamos a una variable uint16_t
-    port = aux;
-
-    return port;
 }
 
 void calcularHash(char *hash, char *fileName)

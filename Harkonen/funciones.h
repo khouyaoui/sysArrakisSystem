@@ -16,7 +16,6 @@ int validarArgumento(char nomImagen[]);
 
 void display(char *string);
 
-void limpiarArrakisSystem();
-
+void limpiarArrakisSystem(void);
 
 #endif

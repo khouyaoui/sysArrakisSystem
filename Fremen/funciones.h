@@ -48,7 +48,7 @@ void display(char *string);
 
 char *readUntil(int fd, char end);
 
-char *readInput();
+char *readInput(void);
 
 char *extraerPalabra(char ***string, int *i);
 
@@ -73,5 +73,7 @@ int validarNomImagen(char nomImagen[]);
 int ocultarDirectorios(const struct dirent *arg);
 
 int existePhoto(char *photo_id,char *directorio);
+
+void errorReadSocket(int num_bytes);
 
 #endif

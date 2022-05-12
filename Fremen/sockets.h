@@ -9,12 +9,14 @@
 #include "tipos.h"
 #include "funciones.h"
 
-uint16_t controlaPuerto(int aux);
 
 int establecerConexion(Config_Data *c);
 
 void extraeDatos(char *datos, char *trama);
 
 void extraeDatosBinarios(char *datos, char *trama);
+
+void errorSocket(int sockfd);
+
 
 #endif

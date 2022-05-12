@@ -31,7 +31,7 @@ int validarArgumento(char arg[])
     return 0;
 }
 
-void limpiarArrakisSystem()
+void limpiarArrakisSystem(void)
 {
     // 20% mata ATREIDES
     // 80% mata a Fremen

@@ -5,15 +5,7 @@
 // Zona de variables_globales
 Config_Data c;
 
-void sigHandler(int signum)
-{
-    if (signum == SIGINT)
-    {
-        liberarStructConfig_Data(&c);
-        display(FINAL_MSG);
-        exit(EXIT_SUCCESS);
-    }
-}
+void sigHandler(int signum);
 
 int main(int argc, char *argv[])
 {
@@ -54,4 +46,14 @@ int main(int argc, char *argv[])
 
     }
     return 0;
+}
+
+void sigHandler(int signum)
+{
+    if (signum == SIGINT)
+    {
+        liberarStructConfig_Data(&c);
+        display(FINAL_MSG);
+        exit(EXIT_SUCCESS);
+    }
 }

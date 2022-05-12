@@ -1,10 +1,12 @@
 all: Harkonen
 
 main.o: main.c funciones.h tipos.h
-	gcc -c -g main.c -Wall -Wextra
+	gcc -c -g main.c -Wall -Wextra -pedantic -Wmissing-prototypes -Wstrict-prototypes \
+    -Wold-style-definition
 
 funciones.o: funciones.c funciones.h tipos.h
-	gcc -c -g funciones.c -Wall -Wextra
+	gcc -c -g funciones.c -Wall -Wextra -pedantic -Wmissing-prototypes -Wstrict-prototypes \
+    -Wold-style-definition
 
 Harkonen: main.o funciones.o 
 	gcc main.o funciones.o -o Harkonen.exe

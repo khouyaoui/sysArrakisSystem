@@ -1,14 +1,7 @@
 #include <sys/signalfd.h>
-#include <sys/select.h>
 #include "funciones.h"
-void sigHandler(int signum)
-{
-    if (signum == SIGINT)
-    {
-        display(FINAL_MSG);
-        exit(EXIT_SUCCESS);
-    }
-}
+void sigHandler(int signum);
+
 
 int main(int argc, char *argv[])
 {
@@ -23,4 +16,13 @@ int main(int argc, char *argv[])
         
     }
     return 0;
+}
+
+void sigHandler(int signum)
+{
+    if (signum == SIGINT)
+    {
+        display(FINAL_MSG);
+        exit(EXIT_SUCCESS);
+    }
 }
