@@ -9,11 +9,12 @@ void liberarStructConfig_Data(Config_Data *c);
 
 void extraerConexiones(Conexion *conexiones,int *numConexiones); // escriber la lista de conexiones en un fichero txt o binario :<
 
-int existenConexiones();
+int existenConexiones(void);
 
 int cargarConexiones(Conexion *conexiones); // leer las conexiones guardadas anteriormente, si el fichero existe
 
-int existenConexiones();
+int existePhoto(char *photo_id);
 
+int ocultarDirectorios(const struct dirent *arg);
 
 #endif

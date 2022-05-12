@@ -7,23 +7,9 @@
 Config_Data c;
 Conexion *conexiones;
 int *numConexiones;
-
 sem_t *semaforo;
+void sigHandler(int signum);
 
-void sigHandler(int signum)
-{
-    if (signum == SIGINT)
-    {
-        //liberarStructConfig_Data(&c);
-        if (*numConexiones > 0)
-        {
-            extraerConexiones(conexiones,numConexiones);
-        }
-        sem_destroy(semaforo);
-        display(FINAL_MSG);
-        exit(EXIT_SUCCESS);
-    }
-}
 int main(int argc, char *argv[])
 {
      
@@ -57,5 +43,17 @@ int main(int argc, char *argv[])
     return 0;
 }
 
-
-// desconecar todos los clientes al recieve ctrl+c or similar
+void sigHandler(int signum)
+{
+    if (signum == SIGINT)
+    {
+        //liberarStructConfig_Data(&c);
+        if (*numConexiones > 0)
+        {
+            extraerConexiones(conexiones,numConexiones);
+        }
+        sem_destroy(semaforo);
+        display(FINAL_MSG);
+        exit(EXIT_SUCCESS);
+    }
+}

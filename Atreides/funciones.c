@@ -123,7 +123,7 @@ uint16_t controlaPuerto(char *user_port)
     return port;
 }
 // -------------  PEDIR MEMORIA COMPARTIDA PARA LA LISTA DE CONEXIONES  ------------------------
-sem_t *inicializarSemaforo()
+sem_t *inicializarSemaforo(void)
 {
     sem_t *semaforo = mmap(NULL, sizeof(sem_t), PROT_READ | PROT_WRITE, MAP_ANON | MAP_SHARED, -1, 0);
     if (semaforo == MAP_FAILED)
@@ -374,51 +374,8 @@ void leerDatosIMG(int sfd, File *file, char *trama)
     }
 }
 
-int ocultarDirectorios(const struct dirent *arg)
-{
-    // Para que no nos devuelva el directorio actual (.) y el anterior (..)
-    if (strcmp(arg->d_name, ".") == 0 || strcmp(arg->d_name, "..") == 0)
-    {
-        return 0;
-    }
-    return 1;
-}
 
-int existePhoto(char *photo_id)
-{
-    int i, num_archivos;
-    struct dirent **archivos;
-    strcat(photo_id, ".jpg");
-    num_archivos = scandir("./Directorio", &archivos, ocultarDirectorios, alphasort);
 
-    if (num_archivos <= 0)
-    {
-        display(DIR_EMPTY_ERR);
-    }
-    else
-    {
-        for (i = 0; i < num_archivos; i++)
-        {
-            // Identificamos el tipo de archivo segun la extension
-            archivos[i]->d_type = archivos[i]->d_name[strlen(archivos[i]->d_name) - 1];
-            if (archivos[i]->d_type == 'g')
-            {
-                if (!strcmp(archivos[i]->d_name, photo_id))
-                {
-                    // calcu
-                    return 1;
-                }
-            }
-        }
-        // FREE de cada elemento del Struct dirent
-        for (i = 0; i < num_archivos; i++)
-        {
-            liberarMemoria(archivos[i]);
-        }
-        liberarMemoria(archivos);
-    }
-    return 0;
-}
 
 void encapsulaTramaBinaria(char *origen, char tipo, char *datos, char *trama)
 {
@@ -434,45 +391,3 @@ void encapsulaTramaBinaria(char *origen, char tipo, char *datos, char *trama)
     }
 }
 
-void enviarImagen(int sfd2, char *datos, File **imagen, char *trama, char *aux)
-{
-    if ((*imagen)->fd > 0)
-    {
-        bzero(datos, LEN_DATOS);
-        strcat(datos, (*imagen)->nom);
-        strcat(datos, "*");
-        sprintf(aux, "%d", (*imagen)->mida);
-        strcat(datos, aux);
-        strcat(datos, "*");
-        strcat(datos, (*imagen)->hash);
-        bzero(trama, LEN_TRAMA);
-        encapsulaTrama(MACHINE_NAME, 'F', datos, trama);
-        // enviamos la cabezera de la imagen: mida md5 nom
-        write(sfd2, trama, LEN_TRAMA);
-
-        while ((*imagen)->mida != 0)
-        {
-            if ((*imagen)->mida >= LEN_DATOS)
-            {
-                read((*imagen)->fd, datos, LEN_DATOS);
-                encapsulaTramaBinaria(MACHINE_NAME, 'D', datos, trama);
-                write(sfd2, trama, LEN_TRAMA);
-                (*imagen)->mida -= LEN_DATOS;
-            }
-            else
-            {
-                // ultim troç d'imatge enviat !
-                read((*imagen)->fd, datos, (*imagen)->mida);
-                encapsulaTramaBinaria(MACHINE_NAME, 'D', datos, trama);
-                write(sfd2, trama, LEN_TRAMA);
-                (*imagen)->mida = 0;
-            }
-            if ((*imagen)->mida == 0)
-            {
-                close((*imagen)->fd);
-                // free((*imagen)->nom);
-                // free(imagen);
-            }
-        }
-    }
-}

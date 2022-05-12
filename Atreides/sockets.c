@@ -1,14 +1,5 @@
 #include "sockets.h"
 
-void errorSocket(int sockfd)
-{
-    if (sockfd < 0)
-    {
-        display(SOCKET_TCP_ERR);
-        raise(SIGINT);
-    }
-}
-
 int crearConexion(char *ip, uint16_t port)
 {
     int sockfd;
@@ -52,18 +43,6 @@ void extraeDatos(char *datos, char *trama)
         j++;
     }
     datos[j] = '\0';
-}
-
-void muestraDatos(char *trama)
-{
-
-    int i = LEN_ORIGEN + 1;
-    while (trama[i] != '\0')
-    {
-        trama[i] == '#' ? display("\n") : write(1, &trama[i], 1);
-        i++;
-    }
-    display("\n");
 }
 
 int aceptarConexion(int sfd1)

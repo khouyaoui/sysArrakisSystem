@@ -56,7 +56,7 @@ uint16_t controlaPuerto(char *user_port);
 
 void errorReadSocket(int num_bytes);
 
-sem_t *inicializarSemaforo();
+sem_t *inicializarSemaforo(void);
 
 int buscarPorCodigoPostal(char *codigoPostal, Conexion *conexiones, int *numConexiones);
 
@@ -78,9 +78,10 @@ void abrirImagen(int ID, char *directorio, File **file);
 
 void leerDatosIMG(int sfd, File *file, char *trama);
 
-int existePhoto(char *photo_id);
 
 void encapsulaTramaBinaria(char *origen, char tipo, char *datos, char *trama);
 
 void enviarImagen(int sfd2, char *datos, File **imagen,char* trama,char *aux);
+
+
 #endif
