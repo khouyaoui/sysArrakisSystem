@@ -5,7 +5,7 @@
 
 #include "funciones.h"
 #include "sockets.h"
-
+#include <strings.h>
 typedef struct {
     char *id;
     char *nombre;

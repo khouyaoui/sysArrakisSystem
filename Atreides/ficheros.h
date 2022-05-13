@@ -2,6 +2,8 @@
 #define FICHEROS_H
 
 #include "funciones.h"
+#include <strings.h>
+#include <dirent.h>
 
 void readConfig(char *nombre_f, Config_Data *c);
 

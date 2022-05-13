@@ -2,6 +2,7 @@
 #define SOCKETS_H
 
 #include "funciones.h"
+#include <strings.h>
 
 int crearConexion(char *ip, uint16_t port);
 

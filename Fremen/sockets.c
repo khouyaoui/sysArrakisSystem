@@ -25,7 +25,6 @@ int establecerConexion(Config_Data *c) {
 
     server.sin_family = AF_INET;
     server.sin_port = htons(puerto);
-    server.sin_addr = *((struct in_addr *)he->h_addr);
 
     if (connect(sockfd, (struct sockaddr *)&server, sizeof(server)) == -1) {
         display("No s'ha pogut trobar el servidor\n");

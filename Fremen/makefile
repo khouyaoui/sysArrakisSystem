@@ -31,4 +31,4 @@ go:
 	./Fremen.exe config.dat
 
 val:
-	valgrind --tool=memcheck --leak-check=yes --show-reachable=yes --track-fds=yes ./Fremen.exe config.dat
+	valgrind --tool=memcheck --leak-check=yes --show-reachable=yes --track-fds=yes --track-origins=yes ./Fremen.exe config.dat

@@ -1,3 +1,4 @@
+#define _DEFAULT_SOURCE
 #include "ficheros.h"
 
 void readConfig(char *nombre_f, Config_Data *c)
