@@ -213,18 +213,19 @@ void gestionarTrama(Config_Data *c, int sfd2, char *trama, Conexion *conexiones,
         else
         {
             display("\nNo hi ha foto registrada.");
-            display("\nEnviada resposta\n");
+            
             bzero(trama, LEN_TRAMA);
             encapsulaTrama(MACHINE_NAME, 'F', "FILE NOT FOUND", trama);
             write(sfd2, trama, LEN_TRAMA);
         }
-        display(TERMINAL_PROMPT);
         break;
     case 'I':
-        display("ii");
+        display("\nEnviada resposta\n");
+        display(TERMINAL_PROMPT);
         break;
     case 'R':
-        display("error");
+        display("El client no ha rebut la imatge correctament");
+        display(TERMINAL_PROMPT);
         break;
     default:
         encapsulaTrama(MACHINE_NAME, 'Z', "ERROR T", trama);
