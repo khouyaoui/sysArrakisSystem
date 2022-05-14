@@ -18,4 +18,4 @@ go:
 	./Harkonen.exe 10
 
 val:
-	valgrind --tool=memcheck --leak-check=yes --show-reachable=yes --track-fds=yes ./Harkonen.exe
+	valgrind --tool=memcheck --leak-check=yes --show-reachable=yes --track-fds=yes ./Harkonen.exe 5

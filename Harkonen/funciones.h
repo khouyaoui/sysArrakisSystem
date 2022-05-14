@@ -9,6 +9,7 @@
 #include <ctype.h>
 #include "tipos.h"
 #include <stdio.h>
+#include <sys/wait.h>
 void errorNumArgumentos(int argc,char *argv);
 
 int validarArgumento(char nomImagen[]);

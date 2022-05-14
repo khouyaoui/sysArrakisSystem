@@ -244,23 +244,7 @@ int buscarPorCodigoPostal(char *codigoPostal, Conexion *conexiones, int *numCone
     }
     return count;
 }
-/*
-void tratarComandasFiles(Config_Data *c,int sfd2, char *trama, char *datos, Conexion *conexiones, int *numConexiones, Conexion *conexion,File *file)
-{
-        char *cadena;
-        char hashAUX[HASH_LEL];
 
-        calcularHash(hashAUX, "ATREIDES.exe");
-        extraeDatos(datos, trama);
-        cadena = strtok(datos, "*");
-        strcpy(file->nom, cadena);
-        cadena = strtok(NULL, "*");
-        file->mida = atoi(cadena);
-        cadena = strtok(NULL, "*");
-        strcpy(file->hash, cadena);
-        fprintf(stdout, "\n %s\n %d\n %s\n NUEVO HASH %s\n", file->hash, file->mida, file->nom, hashAUX);
-}
-*/
 void calcularHash(char *hash, char *fileName)
 {
     int child_status;

@@ -2,7 +2,6 @@
 #include "funciones.h"
 void sigHandler(int signum);
 
-
 int main(int argc, char *argv[])
 {
     errorNumArgumentos(argc,argv[1]);

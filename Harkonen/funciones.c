@@ -33,32 +33,52 @@ int validarArgumento(char arg[])
 
 void limpiarArrakisSystem(void)
 {
-    // 20% mata ATREIDES
-    // 80% mata a Fremen
     srand(time(0));
     char aux[STRBUF];
     char result[STRBUF];
     int n = rand() % 120;
-
-    FILE *pipeCMD;
+    char program[STRBUF];
+    pid_t pid;
     if (n >= 100)
     {
-        pipeCMD = popen("pidof -s ATREIDES.exe", "r");
+        strcpy(program, "ATREIDES.exe");
     }
     else
     {
-        pipeCMD = popen("pidof -s Fremen.exe", "r");
+        strcpy(program, "Fremen.exe");
     }
-    // no puc usar fgets
-    fgets(result, STRBUF, pipeCMD);
-    pid_t pid = strtoul(result, NULL, 10);
+
+    int child_status;
+    int canals[2];
+    if (pipe(canals) == -1)
+        exit(-1);
+    int ret = fork();
+    switch (ret)
+    {
+    case 0:
+        dup2(canals[1], STDOUT_FILENO);
+        close(canals[1]);
+        execl("/usr/bin/pidof", "pidof", program, (char *)NULL);
+        exit(0);
+        break;
+    case -1:
+        write(0, "Error fork per netejar ArrakisSystem", strlen("Error fork per netejar ArrakisSystem"));
+        break;
+    default:
+        waitpid(ret, &child_status, 0);
+        close(canals[1]);
+        read(canals[0], result, sizeof(result));
+        pid = strtoul(result, NULL, 10);
+        close(canals[1]);
+        break;
+    }
     if (pid > 0)
     {
         sprintf(aux, "killing pid %d\n", pid);
         display(aux);
-        kill(pid,SIGINT);
+        kill(pid, SIGINT);
         pid = 0;
-        bzero(result,STRBUF);
+        bzero(result, STRBUF);
     }
-    pclose(pipeCMD);
+    close(canals[0]);
 }

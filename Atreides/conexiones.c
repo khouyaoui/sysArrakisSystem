@@ -208,12 +208,11 @@ void gestionarTrama(Config_Data *c, int sfd2, char *trama, Conexion *conexiones,
             File *imagen = NULL;
             abrirImagen(atoi(datos), c->directorio, &imagen);
             enviarImagen(sfd2, datos, &imagen, trama, aux);
-            display("Enviada resposta\n");
         }
         else
         {
             display("\nNo hi ha foto registrada.");
-            
+            display("Enviada resposta\n");
             bzero(trama, LEN_TRAMA);
             encapsulaTrama(MACHINE_NAME, 'F', "FILE NOT FOUND", trama);
             write(sfd2, trama, LEN_TRAMA);
