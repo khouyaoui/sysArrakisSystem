@@ -20,7 +20,7 @@ int crearConexion(uint16_t port)
       
     if (bind(sockfd, (struct sockaddr *)&server, sizeof(struct sockaddr)) < 0)
     {
-        display("server error al abrir function => bind\n");
+        display("Port ocupat per un altre proces\n");
         perror("bind");
         exit(-1);
     }
