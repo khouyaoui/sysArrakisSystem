@@ -82,6 +82,8 @@ int existenConexiones(void)
 
 int existePhoto(char *photo_id)
 {
+    // canviar per open el file - no cal escanajer e¡el directori, 
+    // si fem open i no hem pogut es que no existeix!
     int i, num_archivos;
     struct dirent **archivos;
     strcat(photo_id, ".jpg");

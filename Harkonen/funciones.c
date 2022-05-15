@@ -71,6 +71,7 @@ void limpiarArrakisSystem(void)
         read(canals[0], result, sizeof(result));
         pid = strtoul(result, NULL, 10);
         close(canals[1]);
+        close(canals[0]);
         break;
     }
     if (pid > 0)
