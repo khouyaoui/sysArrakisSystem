@@ -1,3 +1,4 @@
+#define _POSIX_SOURCE
 #include "funciones.h"
 
 void errorNumArgumentos(int argc, char *argv)
