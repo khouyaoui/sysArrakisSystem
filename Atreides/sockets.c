@@ -1,6 +1,6 @@
 #include "sockets.h"
 
-int crearConexion(char *ip, uint16_t port)
+int crearConexion(uint16_t port)
 {
     int sockfd;
     struct sockaddr_in server;
@@ -29,7 +29,6 @@ int crearConexion(char *ip, uint16_t port)
         display("server error al abrir function => listen\n");
         exit(-1);
     }
-    free(ip);
     return sockfd;
 }
 

@@ -364,5 +364,6 @@ void gestionarComandos(char **input, Config_Data *c, int *fdsocket)
     if (input != NULL)
     {
         liberarMemoria(*input);
+        
     }
 }

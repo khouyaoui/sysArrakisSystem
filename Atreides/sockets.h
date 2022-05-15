@@ -4,7 +4,7 @@
 #include "funciones.h"
 #include <strings.h>
 
-int crearConexion(char *ip, uint16_t port);
+int crearConexion(uint16_t port);
 
 void gestionaConexiones(int sockfd);
 

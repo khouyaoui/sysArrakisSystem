@@ -18,7 +18,7 @@ int main(int argc, char *argv[])
     readConfig(argv[1], &c);
     signal(SIGINT, sigHandler);
     signal(SIGCHLD, SIG_IGN);
-    int sfd1 = crearConexion(c.ip_server, atoi(c.port_server));
+    int sfd1 = crearConexion(atoi(c.port_server));
     semaforo = inicializarSemaforo();
     inicializarListaConexiones(&conexiones, &numConexiones);
     *numConexiones = cargarConexiones(conexiones);

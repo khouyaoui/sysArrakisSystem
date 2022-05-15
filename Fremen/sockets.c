@@ -10,13 +10,15 @@ int establecerConexion(Config_Data *c) {
     int puerto, sockfd;  // numbytes
     // buffer[LEN_TRAMA];
     puerto = atoi(c->port_server);
-    struct hostent *he;  // datos recibidos
-    struct sockaddr_in server;
+    //struct hostent *he;  // datos recibidos
+    struct sockaddr_in server = {0};
 
+#if 0
     if ((he = gethostbyname(c->ip_server)) == NULL) {
         display("client error en gethostbyname\n");
         return -1;
     }
+#endif
 
     if ((sockfd = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
         display("client error en abrir socket client\n");
