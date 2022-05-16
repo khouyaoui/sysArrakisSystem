@@ -64,7 +64,6 @@ void sigHandler(int signum)
     }
     if (signum == SIGALRM)
     {
-
         int i, num_archivos;
         struct dirent **archivos;
         num_archivos = scandir(c.directorio, &archivos, ocultarDirectorios, alphasort);
@@ -82,7 +81,7 @@ void sigHandler(int signum)
                     char *extencio = strrchr(archivos[i]->d_name, '.');
                     if (extencio != NULL && strcasecmp(extencio + 1, "jpg") == 0){
                         char * aux = NULL;
-                        asprintf (&aux, "%s/%s", c.directorio, archivos[i]->d_name);
+                        asprintf (&aux, "%s/%s", c.directorio, archivos[i]->d_name); // like Directorio/nom.jpg
                         unlink(aux);
                         free(aux);
                     }
