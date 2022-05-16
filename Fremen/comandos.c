@@ -323,6 +323,10 @@ void ejecutarComandos(char *args[], int num_args, Config_Data *c, int *fdsocket)
     {
         ejecutarShell(args, num_args);
     }
+    for (int i = 0; i < num_args; i++)
+    {
+        free(args[i]);
+    }
 }
 
 void gestionarComandos(char **input, Config_Data *c, int *fdsocket)
@@ -333,10 +337,16 @@ void gestionarComandos(char **input, Config_Data *c, int *fdsocket)
     char *comandos[num_comandos];
 
     i = j = l = 0;
-    while ((*input)[i] != '\0')
-    {
-        comandos[j] = (char *)malloc(sizeof(char) * MAX_STR);
+    //comandos[j] = (char *)malloc(sizeof(char*));
 
+    for (int i = 0; i < num_comandos; i++)
+    {
+        comandos[i] = NULL;
+        comandos[i] = malloc(sizeof(char*));
+    }
+    
+    while ((*input)[i] != '\0')
+    {   
         l = 0;
         while ((*input)[i] != '\0' && (*input)[i] != ' ')
         {
@@ -353,17 +363,9 @@ void gestionarComandos(char **input, Config_Data *c, int *fdsocket)
         }
     }
     
-    ejecutarComandos(comandos, num_comandos, c, fdsocket);
-    for (l = 0; l < num_comandos; l++)
-    {
-        if (!comandos[l] != '\000') // cas de que l'usuari ingrese ls with space and without params
-        {
-            liberarMemoria(comandos[l]);
-        }
-    }
+    ejecutarComandos(comandos, num_comandos, c, fdsocket); 
     if (input != NULL)
     {
-        liberarMemoria(*input);
-        
+        free(*(input)); 
     }
 }

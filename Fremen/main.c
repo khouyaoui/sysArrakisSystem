@@ -37,8 +37,11 @@ int main(int argc, char *argv[])
         if (FD_ISSET(0, &set))
         {
             input = readInput();
-            if (strlen(input))
+            if (strlen(input)){
                 gestionarComandos(&input, &c, &fdsocket);
+            }else {
+                free(input);
+            }
         }
         if (fdsocket > 0 && FD_ISSET(fdsocket, &set))
         {
