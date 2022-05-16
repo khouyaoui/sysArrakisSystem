@@ -271,13 +271,13 @@ void ejecutarComandos(char *args[], int num_args, Config_Data *c, int *fdsocket)
                      
                     if (trama[LEN_ORIGEN] == 'F' && 0 == strcmp("FILE NOT FOUND", trama + 16)) // imatge no trobada
                     {
-                        display("\nNo hi ha foto registrada :(\n");
+                        display("\nNo hi ha foto registrada\n");
                     }
                     else
                     {
                         crearFichero(atoi(args[1]), c->directorio, &imagen, trama);
                         leerDatosIMG(*fdsocket, &imagen, trama);
-                        display("\nFoto descarregada :)\n");
+                        display("\nFoto descarregada\n");
                     }
                 }
                 else

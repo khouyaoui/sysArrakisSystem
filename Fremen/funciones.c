@@ -117,10 +117,7 @@ char *extraerPalabra(char ***string, int *i)
         j++;
     }
     // char *toma = {'\0'};
-    palabra[j] = '\0';
-    // palabra = (char *)malloc(sizeof(char) * strlen(aux));
-    // strcpy(palabra, aux);
-    // printf("La palabra: %s\n", *palabra);
+    palabra[j] = '\0';  
     return palabra;
 }
 
@@ -173,16 +170,6 @@ void encapsulaTrama(char *origen, char tipo, char *datos, char *trama)
     {
         trama[i] = datos[j];
         i++;
-    }
-}
-
-// ----------------------------------  CONTROLAR ERROR READ  ----------------------------------
-void errorReadSocket(int num_bytes)
-{
-    if (num_bytes < 0)
-    {
-        display(SOCKET_READ_ERR);
-        raise(SIGINT);
     }
 }
 

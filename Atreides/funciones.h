@@ -52,10 +52,6 @@ char *readUntil(int fd, char end);
 
 void esperarConexiones(Config_Data *c);
 
-uint16_t controlaPuerto(char *user_port);
-
-void errorReadSocket(int num_bytes);
-
 sem_t *inicializarSemaforo(void);
 
 int buscarPorCodigoPostal(char *codigoPostal, Conexion *conexiones, int *numConexiones);
@@ -65,8 +61,6 @@ Conexion *recuperarConexion(char *login, char *cp, Conexion *conexiones, int *nu
 Conexion *tratarNuevaConexion(char *trama, Conexion *conexiones, int *numConexiones);
 
 void tratarComandaSearch(int sfd2, char *trama, char *datos, Conexion *conexiones, int *numConexiones, Conexion *conexion);
-
-// void tratarComandasFiles(int sfd2, char *trama, char *datos, Conexion *conexiones, int *numConexiones, Conexion *conexion);
 
 void calcularHash(char *hash, char *fileName);
 
@@ -78,10 +72,8 @@ void abrirImagen(int ID, char *directorio, File **file);
 
 void leerDatosIMG(int sfd, File *file, char *trama);
 
-
 void encapsulaTramaBinaria(char *origen, char tipo, char *datos, char *trama);
 
 void enviarImagen(int sfd2, char *datos, File **imagen,char* trama,char *aux);
-
 
 #endif

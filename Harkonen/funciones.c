@@ -36,17 +36,17 @@ void limpiarArrakisSystem(void)
 {
     srand(time(0));
     char aux[STRBUF];
-    char result[STRBUF];
+    char result[STRBUF] = {0};
     int n = rand() % 120;
     char program[STRBUF];
     pid_t pid;
     if (n >= 100)
     {
-        strcpy(program, "ATREIDES.exe");
+        strcpy(program, ATREIDES);
     }
     else
     {
-        strcpy(program, "Fremen.exe");
+        strcpy(program, FREMEN);
     }
 
     int child_status;
@@ -63,20 +63,20 @@ void limpiarArrakisSystem(void)
         exit(0);
         break;
     case -1:
-        write(0, "Error fork per netejar ArrakisSystem", strlen("Error fork per netejar ArrakisSystem"));
+        display(FORKERR);
         break;
     default:
         waitpid(ret, &child_status, 0);
         close(canals[1]);
         read(canals[0], result, sizeof(result));
-        pid = strtoul(result, NULL, 10);
+        pid = (pid_t)strtoul(result, NULL, 10);
         close(canals[1]);
         close(canals[0]);
         break;
     }
     if (pid > 0)
     {
-        sprintf(aux, "killing pid %d\n", pid);
+        sprintf(aux, KILLINGMSG, pid);
         display(aux);
         kill(pid, SIGINT);
         pid = 0;

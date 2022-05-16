@@ -87,41 +87,14 @@ void esperarConexiones(Config_Data *c)
 
     if (bind(s_fd, (struct sockaddr *)&direccion, sizeof(direccion)) == -1)
     {
-        printf("Error en el bind\n");
+        display("\nError en el bind\n");
     }
     if (listen(s_fd, 1) == -1)
     {
-        printf("Error\n");
+        display("\nError\n");
     }
 }
 
-// ----------------------------------  CONTROLAR ERROR READ  ----------------------------------
-void errorReadSocket(int num_bytes)
-{
-    if (num_bytes < 0)
-    {
-        display(SOCKET_READ_ERR);
-        raise(SIGINT);
-    }
-}
-
-// ----------------------------------  CONTROLAR PURTO VALIDO  --------------------------------
-uint16_t controlaPuerto(char *user_port)
-{
-    // Rango Puerto valido
-    uint16_t port;
-    int aux = atoi(user_port);
-    if (aux < MIN_PORT_RANGE || aux > MAX_PORT_RANGE)
-    {
-        display(PORT_RANGE_ERR);
-        raise(SIGINT);
-    }
-
-    // Si el puerto es valido lo asignamos a una variable uint16_t
-    port = aux;
-
-    return port;
-}
 // -------------  PEDIR MEMORIA COMPARTIDA PARA LA LISTA DE CONEXIONES  ------------------------
 sem_t *inicializarSemaforo(void)
 {

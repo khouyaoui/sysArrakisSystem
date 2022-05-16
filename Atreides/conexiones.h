@@ -12,14 +12,6 @@
 
 int inicializarListaConexiones(Conexion **conexiones,int **numConexiones);
 
-Conexion *obtenirConexion(int id, Conexion *conexiones,int *numConexiones); //devuelve una conexion (Fremen)
-
-Conexion *obtenirListaConexiones(Conexion *conexiones,int *numConexiones); // devuelve todas las conexiones, lista de Fremen's
-
-int existeConexion(int id, Conexion *conexiones, int *numConexiones, char *nomNovaConexion);
-
-void printConexiones(Conexion *conexiones,int *numConexiones);
-
 int atenderCliente(Config_Data *c, int sfd2,Conexion *conexiones,int *numConexiones,sem_t *semaforo);
 
 void gestionarTrama(Config_Data *c,int sfd2, char *trama, Conexion *conexiones, sem_t *semaforo, int *numConexiones, Conexion **conexion,File **f);

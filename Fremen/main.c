@@ -39,8 +39,6 @@ int main(int argc, char *argv[])
             input = readInput();
             if (strlen(input)){
                 gestionarComandos(&input, &c, &fdsocket);
-            }else {
-                free(input);
             }
         }
         if (fdsocket > 0 && FD_ISSET(fdsocket, &set))
@@ -56,7 +54,7 @@ int main(int argc, char *argv[])
 
 void sigHandler(int signum)
 {
-    if (signum == SIGINT)
+    if (signum == SIGINT || signum == SIGTERM)
     {
         liberarStructConfig_Data(&c);
         display(FINAL_MSG);

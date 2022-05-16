@@ -6,8 +6,6 @@
 
 int crearConexion(uint16_t port);
 
-void gestionaConexiones(int sockfd);
-
 void extraeDatos(char *datos, char *trama);
 
 int aceptarConexion(int sfd2);

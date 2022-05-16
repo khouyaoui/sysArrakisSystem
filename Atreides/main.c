@@ -45,7 +45,7 @@ int main(int argc, char *argv[])
 
 void sigHandler(int signum)
 {
-    if (signum == SIGINT)
+    if (signum == SIGINT || signum == SIGTERM)
     {
         liberarStructConfig_Data(&c);
         if (*numConexiones > 0)
