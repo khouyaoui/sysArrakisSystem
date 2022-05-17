@@ -14,6 +14,7 @@ int establecerConexion(Config_Data *c) {
         display("client error en abrir socket client\n");
         return -1;
     }
+
     server.sin_family = AF_INET;
     server.sin_port = htons(puerto);
 
@@ -22,17 +23,7 @@ int establecerConexion(Config_Data *c) {
         return -1;
     } else {
         return sockfd;
-    }
-    /*
-    if ((numbytes = recv(sockfd, buffer, LEN_TRAMA, 0)) < 0)
-    {
-        display("client error en abrir socket recv\n");
-        exit(-1);
-    }
-    buffer[numbytes] = '\n';
-    display("mensaje del server\n");
-    display(buffer);
-    */
+    }  
     return sockfd;
 }
 

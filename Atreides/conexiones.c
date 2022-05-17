@@ -56,6 +56,8 @@ int atenderCliente(Config_Data *c, int sfd2, Conexion *conexiones, int *numConex
         }
     }
 }
+// -----------------------  devuelve el size del fichero --------------------------
+
 void desconectarCliente(Conexion *conexiones, int *numConexiones, int id)
 {
 
@@ -70,6 +72,7 @@ void desconectarCliente(Conexion *conexiones, int *numConexiones, int id)
 
     display(" Desconnectat d’Atreides.\n");
 }
+// -----------------------  tradar de respoder al cliente dependiendo de la trama recibida --------------------------
 
 void gestionarTrama(Config_Data *c, int sfd2, char *trama, Conexion *conexiones, sem_t *semaforo, int *numConexiones, Conexion **conexion, File **file)
 {

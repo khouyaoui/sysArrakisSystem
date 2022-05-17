@@ -2,8 +2,6 @@
 
 void ejecutarShell(char *args[], int num_args)
 {
-    // display(num_args);
-    // display(args[0]);
     args[num_args] = NULL;
     pid_t pid = fork();
     switch (pid)
@@ -32,8 +30,6 @@ void ejecutarComandos(char *args[], int num_args, Config_Data *c, int *fdsocket)
     char datos[LEN_DATOS];
     char aux[MAX_STR];
     int num_bytes;
-
-    
 
     pasarMinus(args[0]);
     if (!strcmp(args[0], LOGIN))
@@ -323,10 +319,6 @@ void ejecutarComandos(char *args[], int num_args, Config_Data *c, int *fdsocket)
     {
         ejecutarShell(args, num_args);
     }
-    for (int i = 0; i < num_args; i++)
-    {
-        free(args[i]);
-    }
 }
 
 void gestionarComandos(char **input, Config_Data *c, int *fdsocket)
@@ -339,10 +331,10 @@ void gestionarComandos(char **input, Config_Data *c, int *fdsocket)
     i = j = l = 0;
     //comandos[j] = (char *)malloc(sizeof(char*));
 
-    for (int i = 0; i < num_comandos; i++)
+    for (int z = 0; z < num_comandos; z++)
     {
-        comandos[i] = NULL;
-        comandos[i] = malloc(sizeof(char*));
+        comandos[z] = NULL;
+        comandos[z] = malloc(sizeof(char*));
     }
     
     while ((*input)[i] != '\0')
@@ -363,9 +355,14 @@ void gestionarComandos(char **input, Config_Data *c, int *fdsocket)
         }
     }
     
-    ejecutarComandos(comandos, num_comandos, c, fdsocket); 
+    ejecutarComandos(comandos, num_comandos, c, fdsocket);
+    for (int i = 0; i < num_comandos; i++)
+    {
+        liberarMemoria(comandos[i]);
+    }
+    
     if (input != NULL)
     {
-        free(*(input)); 
+        liberarMemoria(*input);
     }
 }

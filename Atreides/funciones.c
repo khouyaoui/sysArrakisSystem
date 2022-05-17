@@ -217,6 +217,7 @@ int buscarPorCodigoPostal(char *codigoPostal, Conexion *conexiones, int *numCone
     }
     return count;
 }
+// ----------------------- dado un fichero, rellena un array con su md5 calculado --------------------------
 
 void calcularHash(char *hash, char *fileName)
 {
@@ -246,6 +247,7 @@ void calcularHash(char *hash, char *fileName)
         break;
     }
 }
+// -----------------------  devuelve el size del fichero --------------------------
 
 int calcularMida(int fd)
 {

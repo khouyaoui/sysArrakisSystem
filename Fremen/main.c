@@ -19,9 +19,10 @@ int main(int argc, char *argv[])
     signal(SIGALRM, sigHandler); // Clean .JPG
     alarm(c.segundos);
     display(INIT_MSG);
+    display(TERMINAL_PROMPT);
+
     for (;;)
     {
-        display(TERMINAL_PROMPT);
         fd_set set;
         FD_ZERO(&set);
         FD_SET(0, &set);
@@ -31,30 +32,40 @@ int main(int argc, char *argv[])
         // r és el número de file descriptors on puc fer operacions
         // r -1 vol dir error
         // TODO
-        if (r == 1)
-        { // nomes per fer la documentació
+        if (r < 0)
+        {
+            // display("fuckkkk select+sig alarm\n");
+            continue;
         }
         if (FD_ISSET(0, &set))
         {
             input = readInput();
-            if (strlen(input)){
+            if (strlen(input))
+            {
                 gestionarComandos(&input, &c, &fdsocket);
+                display(TERMINAL_PROMPT);
+            }
+            else
+            {
+                free(input); // aquest free cal per quan ens posen espais i entre sense comandas
+                display(TERMINAL_PROMPT);
             }
         }
         if (fdsocket > 0 && FD_ISSET(fdsocket, &set))
         {
             close(fdsocket);
             fdsocket = 0;
-            display("\nS'ha perdut la connexiò amb el servidor\n");
+            display("\nS'ha perdut la connexiò amb el servidor, pots continuar executant comandes del sistema o tornat a establer la connexio\n");
+            display(TERMINAL_PROMPT);
             //  si llegir socket retorna zero o -1: primer close i després *fd_socket = 0;
         }
     }
     return 0;
 }
-
+// -----------------------  gestionar las señales reprogramadas --------------------------
 void sigHandler(int signum)
 {
-    if (signum == SIGINT || signum == SIGTERM)
+    if (signum == SIGINT)
     {
         liberarStructConfig_Data(&c);
         display(FINAL_MSG);
@@ -62,29 +73,24 @@ void sigHandler(int signum)
     }
     if (signum == SIGALRM)
     {
-        int i, num_archivos;
+        int i, num_archivos = 0;
         struct dirent **archivos;
         num_archivos = scandir(c.directorio, &archivos, ocultarDirectorios, alphasort);
-
-        if (num_archivos <= 0)
-        {
-            // do nothing
-        }
-        else
+        if (num_archivos > 0)
         {
             for (i = 0; i < num_archivos; i++)
             {
                 if (archivos[i]->d_type == DT_REG)
                 {
                     char *extencio = strrchr(archivos[i]->d_name, '.');
-                    if (extencio != NULL && strcasecmp(extencio + 1, "jpg") == 0){
-                        char * aux = NULL;
-                        asprintf (&aux, "%s/%s", c.directorio, archivos[i]->d_name); // like Directorio/nom.jpg
+                    if (extencio != NULL && strcasecmp(extencio + 1, "jpg") == 0)
+                    {
+                        char *aux = NULL;
+                        asprintf(&aux, "%s/%s", c.directorio, archivos[i]->d_name); // like Directorio/nom.jpg
                         unlink(aux);
                         free(aux);
                     }
                 }
-                
             }
         }
         // FREE de cada elemento del Struct dirent
@@ -93,7 +99,6 @@ void sigHandler(int signum)
             liberarMemoria(archivos[i]);
         }
         liberarMemoria(archivos);
-
         alarm(c.segundos); // tornem a reconfigurar per la propera neteja
     }
 }
