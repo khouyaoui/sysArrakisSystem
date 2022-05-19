@@ -31,7 +31,7 @@ int main(int argc, char *argv[])
         int r = select(FD_SETSIZE, &set, NULL, NULL, NULL);
         // r és el número de file descriptors on puc fer operacions
         // r -1 vol dir error
-        // TODO
+        // 
         if (r < 0)
         {
             // display("fuckkkk select+sig alarm\n");
