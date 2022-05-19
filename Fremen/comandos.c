@@ -274,6 +274,10 @@ void ejecutarComandos(char *args[], int num_args, Config_Data *c, int *fdsocket)
                         crearFichero(atoi(args[1]), c->directorio, &imagen, trama);
                         leerDatosIMG(*fdsocket, &imagen, trama);
                         display("\nFoto descarregada\n");
+                        bzero(trama,LEN_TRAMA);
+                        encapsulaTrama(MACHINE_NAME, 'I', "IMAGE OK", trama);
+                        write(*fdsocket, trama, LEN_TRAMA);
+
                     }
                 }
                 else

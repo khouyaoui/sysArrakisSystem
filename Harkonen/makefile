@@ -15,7 +15,7 @@ clean:
 	rm *.o *.exe
 
 go:
-	./Harkonen.exe 10
+	./Harkonen.exe 30
 
 val:
 	valgrind --tool=memcheck --leak-check=yes --show-reachable=yes --track-fds=yes ./Harkonen.exe 5

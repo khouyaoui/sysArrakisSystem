@@ -221,7 +221,6 @@ int buscarPorCodigoPostal(char *codigoPostal, Conexion *conexiones, int *numCone
 
 void calcularHash(char *hash, char *fileName)
 {
-    int child_status;
     int canals[2];
     if (pipe(canals) == -1)
         exit(-1);
@@ -239,7 +238,7 @@ void calcularHash(char *hash, char *fileName)
         write(0, "Error fork calcularHash funciones.c", strlen("Error fork calcularHash funciones.c"));
         break;
     default:
-        waitpid(ret, &child_status, 0);
+        waitpid(ret, NULL, 0);
         close(canals[1]);
         // int nbytes = read(canals[0], hash, 32);
         read(canals[0], hash, 32);

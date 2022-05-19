@@ -49,12 +49,11 @@ void limpiarArrakisSystem(void)
         strcpy(program, FREMEN);
     }
 
-    int child_status;
     int canals[2];
     if (pipe(canals) == -1)
         exit(-1);
-    int ret = fork();
-    switch (ret)
+    int forkPID = fork();
+    switch (forkPID)
     {
     case 0:
         dup2(canals[1], STDOUT_FILENO);
@@ -66,10 +65,10 @@ void limpiarArrakisSystem(void)
         display(FORKERR);
         break;
     default:
-        waitpid(ret, &child_status, 0);
+        waitpid(forkPID,NULL, 0);
         close(canals[1]);
         read(canals[0], result, sizeof(result));
-        pid = (pid_t)strtoul(result, NULL, 10);
+        pid = (pid_t)atoi(result);
         close(canals[1]);
         close(canals[0]);
         break;

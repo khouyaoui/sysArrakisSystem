@@ -9,8 +9,13 @@ int main(int argc, char *argv[])
     display(INIT_MSG);
     for (;;)
     {
-        sleep (atoi(argv[1]));
         display(SCAN);
+        for (size_t i = atoi(argv[1]); i > 0; i--)
+        {
+            display(".");
+            sleep(1);
+        }
+        display("\n");
         limpiarArrakisSystem();
         
     }

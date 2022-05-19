@@ -175,12 +175,11 @@ void encapsulaTrama(char *origen, char tipo, char *datos, char *trama)
 
 void calcularHash(char *hash, char *fileName)
 {
-    int child_status;
     int canals[2];
     if (pipe(canals) == -1)
         exit(-1);
-    int ret = fork();
-    switch (ret)
+    int forkPID = fork();
+    switch (forkPID)
     {
     case 0:
         dup2(canals[1], STDOUT_FILENO);
@@ -193,9 +192,8 @@ void calcularHash(char *hash, char *fileName)
         write(0, "Error fork calcularHash funciones.c", strlen("Error fork calcularHash funciones.c"));
         break;
     default:
-        waitpid(ret, &child_status, 0);
+        waitpid(forkPID, NULL, 0);
         close(canals[1]);
-        // int nbytes = read(canals[0], hash, 32);
         read(canals[0], hash, 32);
         close(canals[0]);
         break;
