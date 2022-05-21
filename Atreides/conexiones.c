@@ -134,6 +134,8 @@ void gestionarTrama(Config_Data *c, int sfd2, char *trama, Conexion *conexiones,
         break;
     case 'P':
         bzero(datos, LEN_DATOS);
+        bzero(aux, MAX_STR);
+
         extraeDatos(datos, trama);
         sprintf(aux, "Rebut photo %s de %s %d", datos, (*conexion)->nom, (*conexion)->id);
         display(aux);
@@ -149,10 +151,11 @@ void gestionarTrama(Config_Data *c, int sfd2, char *trama, Conexion *conexiones,
         else
         {
             display("\nNo hi ha foto registrada.");
-            display("Enviada resposta\n");
+            display("\nEnviada resposta\n");
             bzero(trama, LEN_TRAMA);
             encapsulaTrama(MACHINE_NAME, 'F', "FILE NOT FOUND", trama);
             write(sfd2, trama, LEN_TRAMA);
+            display(TERMINAL_PROMPT);
         }
         break;
     case 'I':

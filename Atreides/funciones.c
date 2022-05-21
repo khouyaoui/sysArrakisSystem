@@ -189,7 +189,7 @@ void tratarComandaSearch(int sfd2, char *trama, char *datos, Conexion *conexione
                 strcat(datos, "*");
                 sprintf(auxID, "%d", conexiones[i].id);
                 strcat(datos, auxID);
-                if (i < count && i < (int)strlen(datos))
+                if (i < *numConexiones - 1)
                 {
                     strcat(datos, "*");
                 }
@@ -294,7 +294,7 @@ void abrirImagen(int ID, char *directorio, File **file)
     memcpy((*file)->hash, hashAUX, 32);
     if ((*file)->fd < 0)
     {
-        display("\nerror fdfd\n");
+        display("\nError al abrir la imagen\n");
         // enviar trama de error
         //  fer frees
     }
