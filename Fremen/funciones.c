@@ -263,6 +263,7 @@ void leerDatosIMG(int sfd, File **imagen, char *trama)
             close((*imagen)->fd);
             char downloadedHash[32];
             calcularHash(downloadedHash, (*imagen)->nom);
+            bzero(trama,LEN_TRAMA);
             if (0 == memcmp(downloadedHash, (*imagen)->hash, 32))
             {
                 encapsulaTrama(MACHINE_NAME, 'I', "IMAGE OK", trama);

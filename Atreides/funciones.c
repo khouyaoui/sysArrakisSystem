@@ -319,6 +319,7 @@ void leerDatosIMG(int sfd, File *file, char *trama)
         calcularHash(downloadedHash, file->nom);
         if (0 == memcmp(downloadedHash, file->hash, 32))
         {
+
             encapsulaTrama(MACHINE_NAME, 'I', "IMAGE OK", trama);
             write(sfd, trama, LEN_TRAMA);
         }
@@ -327,8 +328,13 @@ void leerDatosIMG(int sfd, File *file, char *trama)
             encapsulaTrama(MACHINE_NAME, 'R', "“IMAGE KO", trama);
             write(sfd, trama, LEN_TRAMA);
         }
+        char aux[MAX_STR];
+        strtok(file->nom,"/");
+        sprintf(aux, "Guardada com %s\n", strtok(NULL,"/"));
+        display(aux);
         free(file->nom);
         free(file);
+        display(TERMINAL_PROMPT);
     }
 }
 

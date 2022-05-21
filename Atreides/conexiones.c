@@ -100,6 +100,7 @@ void gestionarTrama(Config_Data *c, int sfd2, char *trama, Conexion *conexiones,
             encapsulaTrama(MACHINE_NAME, 'O', datos, trama);
             write(sfd2, trama, LEN_TRAMA);
             display(TERMINAL_PROMPT);
+            bzero(aux,MAX_STR);
         }
         break;
     case 'S':
@@ -124,10 +125,9 @@ void gestionarTrama(Config_Data *c, int sfd2, char *trama, Conexion *conexiones,
         crearFichero((*conexion)->id, c->directorio, file, trama, &nomImatge);
         sprintf(aux, "Rebut send %s de %s %d\n", nomImatge, (*conexion)->nom, (*conexion)->id);
         display(aux);
-        sprintf(aux, "Guardada com %d.jpg\n", (*conexion)->id);
-        display(aux);
+        
         // hacer el free de nomImatge
-        display(TERMINAL_PROMPT);
+        
         break;
     case 'D':
         leerDatosIMG(sfd2, *file, trama);
@@ -139,7 +139,7 @@ void gestionarTrama(Config_Data *c, int sfd2, char *trama, Conexion *conexiones,
         display(aux);
         if (existePhoto(datos))
         {
-            // fer-ho amb un forks per si rebem altres tramas
+            bzero(aux,MAX_STR);
             sprintf(aux, "\nEnviament %s\n", datos);
             display(aux);
             File *imagen = NULL;
@@ -156,7 +156,7 @@ void gestionarTrama(Config_Data *c, int sfd2, char *trama, Conexion *conexiones,
         }
         break;
     case 'I':
-        display("\nEnviada resposta\n");
+        display("Enviada resposta\n");
         display(TERMINAL_PROMPT);
         break;
     case 'R':

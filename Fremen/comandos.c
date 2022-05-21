@@ -204,6 +204,7 @@ void ejecutarComandos(char *args[], int num_args, Config_Data *c, int *fdsocket)
                         //
                         while ((num_bytes = read(fd_img, datos, LEN_DATOS)) > 0)
                         {
+
                             if (num_bytes > 0)
                             {
                                 encapsulaTramaBinaria(MACHINE_NAME, 'D', datos, trama);
@@ -217,13 +218,14 @@ void ejecutarComandos(char *args[], int num_args, Config_Data *c, int *fdsocket)
                         // tramas de datos img ...
                         if (num_bytes > 0)
                         {
-                            if (0 == strcmp(datos, "IMAGE OK"))
-                            {
-                                display("Foto enviada amb èxit a Atreides.\n");
-                            }
-                            if (0 == strcmp(datos, "IMAGE KO"))
-                            {
-                                display("Error durant l'enviament d'imatge");
+                            switch (trama[LEN_ORIGEN]) {
+
+                                case 'I':
+                                    display("Foto enviada amb èxit a Atreides.\n");
+                                    break;
+                                case 'R':
+                                    display("Error durant l'enviament d'imatge");
+                                    break;                                
                             }
                         }
                         
@@ -273,10 +275,7 @@ void ejecutarComandos(char *args[], int num_args, Config_Data *c, int *fdsocket)
                     {
                         crearFichero(atoi(args[1]), c->directorio, &imagen, trama);
                         leerDatosIMG(*fdsocket, &imagen, trama);
-                        display("\nFoto descarregada\n");
-                        bzero(trama,LEN_TRAMA);
-                        encapsulaTrama(MACHINE_NAME, 'I', "IMAGE OK", trama);
-                        write(*fdsocket, trama, LEN_TRAMA);
+                        display("\nFoto descarregada\n");                        
 
                     }
                 }

@@ -154,8 +154,6 @@ void enviarImagen(int sfd2, char *datos, File **imagen, char *trama, char *aux)
             if ((*imagen)->mida == 0)
             {
                 close((*imagen)->fd);
-                // free((*imagen)->nom);
-                // free(imagen);
             }
         }
     }
