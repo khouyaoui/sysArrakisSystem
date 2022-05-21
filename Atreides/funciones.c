@@ -183,7 +183,10 @@ void tratarComandaSearch(int sfd2, char *trama, char *datos, Conexion *conexione
         {
             if (0 == strcmp(conexiones[i].codigoPostal, codigoPostal))
             {
-                sprintf(aux, "- %d %s\n", conexiones[i].id, conexiones[i].nom);
+                sprintf(aux, "- %d %s", conexiones[i].id, conexiones[i].nom);
+                if(conexiones[i].online == 1)
+                    strcat(aux, "  -> en linea");
+                strcat(aux,"\n");
                 display(aux);
                 strcat(datos, conexiones[i].nom);
                 strcat(datos, "*");

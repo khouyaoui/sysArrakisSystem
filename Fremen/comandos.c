@@ -133,14 +133,13 @@ void ejecutarComandos(char *args[], int num_args, Config_Data *c, int *fdsocket)
                             display(aux);
                             for (int i = 0; i < count; i++)
                             {
-                                display("- ");
+                                display("- ");                              
                                 cadenaAUX = strtok(NULL, "*");
-                                display(cadenaAUX);
+                                display(cadenaAUX);                               
                                 cadenaAUX = strtok(NULL, "*");
                                 display(" ");
                                 display(cadenaAUX);
                                 display("\n");
-                                // cadenaAUX = strtok(NULL, "*");
                             }
                         }
                     }
