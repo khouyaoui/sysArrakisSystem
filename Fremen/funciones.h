@@ -31,7 +31,7 @@
 #include <sys/socket.h>  // int socket(), connect(), struct sockaddr_in
 //#include <netinet/in.h>
 #include <sys/stat.h>
-//isgidit
+// isgidit
 #include <ctype.h>
 // ----------------------------------  Librerias PROPIAS  ----------------------------------
 #include "tipos.h"
@@ -72,6 +72,6 @@ int validarNomImagen(char nomImagen[]);
 
 int ocultarDirectorios(const struct dirent *arg);
 
-int existePhoto(char *photo_id,char *directorio);
+int existePhoto(char *photo_id, char *directorio);
 
 #endif

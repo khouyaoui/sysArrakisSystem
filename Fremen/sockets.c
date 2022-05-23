@@ -23,7 +23,7 @@ int establecerConexion(Config_Data *c) {
         return -1;
     } else {
         return sockfd;
-    }  
+    }
     return sockfd;
 }
 

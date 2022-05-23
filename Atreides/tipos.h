@@ -18,7 +18,7 @@
 #define PHOTO_ARG 1
 #define LOGOUT "logout"
 #define LOGOUT_ARG 1
-//tramas
+// tramas
 #define LEN_ORIGEN 15
 #define LEN_TRAMA 256
 #define LEN_DATOS 240
@@ -45,17 +45,17 @@ typedef struct {
 } Config_Data;
 typedef struct
 {
-  int id;			    // identificador asignado por atraides
-  char codigoPostal[10];		// codigo postal del Fremen
-  char nom[20];			// nombre del Fremen
-  int online;			// 0 | 1 Esta conectado B??
+    int id;                 // identificador asignado por atraides
+    char codigoPostal[10];  // codigo postal del Fremen
+    char nom[20];           // nombre del Fremen
+    int online;             // 0 | 1 Esta conectado B??
 } Conexion;
 
 typedef struct
-{		     
-  char *nom;		
-  int mida;			 
-  char hash[32];
-  int fd;			 
+{
+    char *nom;
+    int mida;
+    char hash[32];
+    int fd;
 } File;
 #endif

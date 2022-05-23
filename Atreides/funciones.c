@@ -1,8 +1,7 @@
 #define _GNU_SOURCE
 #include "funciones.h"
 // ----------------------------------  FREE Y APUNTAR A NULL  ----------------------------------
-void liberarMemoria(void *ptr)
-{
+void liberarMemoria(void *ptr) {
     // Libermaos Memoria
     free(ptr);
     // Dejamos apuntando a NULL
@@ -10,31 +9,25 @@ void liberarMemoria(void *ptr)
 }
 
 // ----------------------------------  CONTROLAR PASO DE ARGUMENTOS  ----------------------------------
-void errorNumArgumentos(int argc)
-{
-    if (argc != NUM_ARG)
-    {
+void errorNumArgumentos(int argc) {
+    if (argc != NUM_ARG) {
         display(ARG_NUMBER_ERR);
         exit(EXIT_FAILURE);
     }
 }
 
 // ----------------------------------  CONTROLAR OBERTURA FICHERO  ----------------------------------
-void errorAbrirFichero(int fd)
-{
-    if (fd < 0)
-    {
+void errorAbrirFichero(int fd) {
+    if (fd < 0) {
         display(FILE_NOT_OPEN_ERR);
         exit(EXIT_FAILURE);
     }
 }
 
 // ----------------------------------  CONTROLAR FICHERO VACIO  -------------------------------------
-void errorFicheroVacio(int fd)
-{
+void errorFicheroVacio(int fd) {
     char precheck;
-    if (read(fd, &precheck, 1) <= 0)
-    {
+    if (read(fd, &precheck, 1) <= 0) {
         display(EMPTY_FILE_ERR);
         close(fd);
         exit(EXIT_FAILURE);
@@ -44,23 +37,19 @@ void errorFicheroVacio(int fd)
 }
 
 // ----------------------------------  MOSTRAR POR PANTALLA  ----------------------------------
-void display(char *string)
-{
+void display(char *string) {
     write(1, string, sizeof(char) * strlen(string));
 }
 
 // ----------------------------------  LEER PALABRA FICHERO  ----------------------------------
-char *readUntil(int fd, char end)
-{
+char *readUntil(int fd, char end) {
     int i = 0;
     char c = '\0';
     char *string = (char *)malloc(sizeof(char));
 
-    while (c != end)
-    {
+    while (c != end) {
         read(fd, &c, sizeof(char));
-        if (c != end)
-        {
+        if (c != end) {
             string = (char *)realloc(string, sizeof(char) * (i + 2));
             string[i] = c;
         }
@@ -72,12 +61,10 @@ char *readUntil(int fd, char end)
 }
 // sockets
 // ---------------------------------- CONEXIONES ----------------------------------
-void esperarConexiones(Config_Data *c)
-{
+void esperarConexiones(Config_Data *c) {
     int s_fd;
     s_fd = socket(AF_INET, SOCK_STREAM, 0);
-    if (s_fd == -1)
-    {
+    if (s_fd == -1) {
         display("Error al abrir el socket!");
     }
     struct sockaddr_in direccion;
@@ -85,22 +72,18 @@ void esperarConexiones(Config_Data *c)
     direccion.sin_port = atoi(c->port_server);
     direccion.sin_addr.s_addr = INADDR_ANY;
 
-    if (bind(s_fd, (struct sockaddr *)&direccion, sizeof(direccion)) == -1)
-    {
+    if (bind(s_fd, (struct sockaddr *)&direccion, sizeof(direccion)) == -1) {
         display("\nError en el bind\n");
     }
-    if (listen(s_fd, 1) == -1)
-    {
+    if (listen(s_fd, 1) == -1) {
         display("\nError\n");
     }
 }
 
 // -------------  PEDIR MEMORIA COMPARTIDA PARA LA LISTA DE CONEXIONES  ------------------------
-sem_t *inicializarSemaforo(void)
-{
+sem_t *inicializarSemaforo(void) {
     sem_t *semaforo = mmap(NULL, sizeof(sem_t), PROT_READ | PROT_WRITE, MAP_ANON | MAP_SHARED, -1, 0);
-    if (semaforo == MAP_FAILED)
-    {
+    if (semaforo == MAP_FAILED) {
         perror("mmap");
         exit(-1);
     }
@@ -109,8 +92,7 @@ sem_t *inicializarSemaforo(void)
     return semaforo;
 }
 // --------------------------  TRATAR LA COMANDA LOGIN  -----------------------------------------
-Conexion *tratarNuevaConexion(char *trama, Conexion *conexiones, int *numConexiones)
-{
+Conexion *tratarNuevaConexion(char *trama, Conexion *conexiones, int *numConexiones) {
     char *login = trama + 16;
     char *aux;
     for (aux = login; *aux != '*'; aux++)
@@ -124,12 +106,10 @@ Conexion *tratarNuevaConexion(char *trama, Conexion *conexiones, int *numConexio
     return recuperarConexion(login, cp, conexiones, numConexiones);
 }
 // -------------------  RECUPERAR UNA CONEXION DESDE LA LISTA  ------------------------------------
-Conexion *recuperarConexion(char *login, char *cp, Conexion *conexiones, int *numConexiones)
-{
+Conexion *recuperarConexion(char *login, char *cp, Conexion *conexiones, int *numConexiones) {
     // assumeixo que no tinc ni NULL ni valors negatius
     for (int i = 0; i < *numConexiones; i++)
-        if (strcmp(login, conexiones[i].nom) == 0)
-        {
+        if (strcmp(login, conexiones[i].nom) == 0) {
             conexiones[i].online = 1;
             strcpy(conexiones[i].codigoPostal, cp);
             return conexiones + i;
@@ -147,8 +127,7 @@ Conexion *recuperarConexion(char *login, char *cp, Conexion *conexiones, int *nu
     return conexiones + *numConexiones - 1;
 }
 // ---------------------------  TRATAR LA COMANDA SEARCH  ----------------------------------------
-void tratarComandaSearch(int sfd2, char *trama, char *datos, Conexion *conexiones, int *numConexiones, Conexion *conexion)
-{
+void tratarComandaSearch(int sfd2, char *trama, char *datos, Conexion *conexiones, int *numConexiones, Conexion *conexion) {
     char *cadena;
     char aux[MAX_STR];
     extraeDatos(datos, trama);
@@ -162,59 +141,45 @@ void tratarComandaSearch(int sfd2, char *trama, char *datos, Conexion *conexione
     display("Feta la cerca\n");
     bzero(datos, LEN_DATOS);
     int count = buscarPorCodigoPostal(codigoPostal, conexiones, numConexiones);
-    if (count == 1)
-    {
+    if (count == 1) {
         sprintf(aux, "Hi ha una persona humana a %s\n", codigoPostal);
-    }
-    else if (count == 0)
-    {
+    } else if (count == 0) {
         sprintf(aux, "No hi ha cap persona humana a %s\n", codigoPostal);
-    }
-    else
-    {
+    } else {
         sprintf(aux, "Hi ha %d persones humanes a %s\n", count, codigoPostal);
     }
     display(aux);
-    if (count > 0)
-    {
+    if (count > 0) {
         char *auxID = malloc(sizeof(char));
         sprintf(datos, "%d*", count);
-        for (int i = 0; i < *numConexiones && i < LEN_DATOS; i++)
-        {
-            if (0 == strcmp(conexiones[i].codigoPostal, codigoPostal))
-            {
+        for (int i = 0; i < *numConexiones && i < LEN_DATOS; i++) {
+            if (0 == strcmp(conexiones[i].codigoPostal, codigoPostal)) {
                 sprintf(aux, "- %d %s", conexiones[i].id, conexiones[i].nom);
-                if(conexiones[i].online == 1)
+                if (conexiones[i].online == 1)
                     strcat(aux, "  -> en linea");
-                strcat(aux,"\n");
+                strcat(aux, "\n");
                 display(aux);
                 strcat(datos, conexiones[i].nom);
                 strcat(datos, "*");
                 sprintf(auxID, "%d", conexiones[i].id);
                 strcat(datos, auxID);
-                if (i < *numConexiones - 1)
-                {
+                if (i < *numConexiones - 1) {
                     strcat(datos, "*");
                 }
             }
         }
         free(auxID);
-    }
-    else
-    {
+    } else {
         sprintf(datos, "%d*", 0);
     }
     encapsulaTrama(MACHINE_NAME, 'L', datos, trama);
     write(sfd2, trama, LEN_TRAMA);
 }
 // -----------------------  BUSCAR EN LA LISTA SEGUN PARAMENTRO DE ENTRADA --------------------------
-int buscarPorCodigoPostal(char *codigoPostal, Conexion *conexiones, int *numConexiones)
-{
+int buscarPorCodigoPostal(char *codigoPostal, Conexion *conexiones, int *numConexiones) {
     int count = 0;
-    for (int i = 0; i < *numConexiones; i++)
-    {
-        if (0 == strcmp(conexiones[i].codigoPostal, codigoPostal))
-        {
+    for (int i = 0; i < *numConexiones; i++) {
+        if (0 == strcmp(conexiones[i].codigoPostal, codigoPostal)) {
             count++;
         }
     }
@@ -222,46 +187,42 @@ int buscarPorCodigoPostal(char *codigoPostal, Conexion *conexiones, int *numCone
 }
 // ----------------------- dado un fichero, rellena un array con su md5 calculado --------------------------
 
-void calcularHash(char *hash, char *fileName)
-{
+void calcularHash(char *hash, char *fileName) {
     int canals[2];
     if (pipe(canals) == -1)
         exit(-1);
     int ret = fork();
-    switch (ret)
-    {
-    case 0:
-        dup2(canals[1], STDOUT_FILENO);
-        close(canals[0]);
-        close(canals[1]);
-        execl("/usr/bin/md5sum", "md5sum", fileName, (char *)NULL);
-        exit(0);
-        break;
-    case -1:
-        write(0, "Error fork calcularHash funciones.c", strlen("Error fork calcularHash funciones.c"));
-        break;
-    default:
-        waitpid(ret, NULL, 0);
-        close(canals[1]);
-        // int nbytes = read(canals[0], hash, 32);
-        read(canals[0], hash, 32);
-        close(canals[0]);
-        break;
+    switch (ret) {
+        case 0:
+            dup2(canals[1], STDOUT_FILENO);
+            close(canals[0]);
+            close(canals[1]);
+            execl("/usr/bin/md5sum", "md5sum", fileName, (char *)NULL);
+            exit(0);
+            break;
+        case -1:
+            write(0, "Error fork calcularHash funciones.c", strlen("Error fork calcularHash funciones.c"));
+            break;
+        default:
+            waitpid(ret, NULL, 0);
+            close(canals[1]);
+            // int nbytes = read(canals[0], hash, 32);
+            read(canals[0], hash, 32);
+            close(canals[0]);
+            break;
     }
 }
 // -----------------------  devuelve el size del fichero --------------------------
 
-int calcularMida(int fd)
-{
+int calcularMida(int fd) {
     struct stat st;
     fstat(fd, &st);
     return (int)st.st_size;
 }
 
-void crearFichero(int ID, char *directorio, File **file, char *trama, char **nomImatge)
-{
+void crearFichero(int ID, char *directorio, File **file, char *trama, char **nomImatge) {
     *file = malloc(sizeof(File));
-    asprintf(&((*file)->nom), "%s/%d.jpg", directorio, ID); // calcular memoria i demanarla -> familia sprintf // fa el malloc
+    asprintf(&((*file)->nom), "%s/%d.jpg", directorio, ID);  // calcular memoria i demanarla -> familia sprintf // fa el malloc
 
     // .jpg
     *nomImatge = malloc(sizeof(char *));
@@ -276,8 +237,7 @@ void crearFichero(int ID, char *directorio, File **file, char *trama, char **nom
     (*file)->mida = atoi(mida);
     memcpy((*file)->hash, aux + 1, HASH_LEN);
     (*file)->fd = open((*file)->nom, O_WRONLY | O_CREAT | O_TRUNC, 0666);
-    if ((*file)->fd < 0)
-    {
+    if ((*file)->fd < 0) {
         display("\nerror fdfd\n");
         // enviar trama de error
         //  fer frees
@@ -285,55 +245,44 @@ void crearFichero(int ID, char *directorio, File **file, char *trama, char **nom
     (*nomImatge) = strtok(trama + 16, "*");
 }
 
-void abrirImagen(int ID, char *directorio, File **file)
-{
+void abrirImagen(int ID, char *directorio, File **file) {
     *file = malloc(sizeof(File));
     char hashAUX[32];
-    asprintf(&((*file)->nom), "%s/%d.jpg", directorio, ID); // calcular memoria i demanarla -> familia sprintf // fa el malloc
+    asprintf(&((*file)->nom), "%s/%d.jpg", directorio, ID);  // calcular memoria i demanarla -> familia sprintf // fa el malloc
     (*file)->fd = open((*file)->nom, O_RDONLY);
     (*file)->mida = calcularMida((*file)->fd);
     calcularHash(hashAUX, (*file)->nom);
-    asprintf(&((*file)->nom), "%d.jpg", ID); // calcular memoria i demanarla -> familia sprintf // fa el malloc
+    asprintf(&((*file)->nom), "%d.jpg", ID);  // calcular memoria i demanarla -> familia sprintf // fa el malloc
     memcpy((*file)->hash, hashAUX, 32);
-    if ((*file)->fd < 0)
-    {
+    if ((*file)->fd < 0) {
         display("\nError al abrir la imagen\n");
         // enviar trama de error
         //  fer frees
     }
 }
 
-void leerDatosIMG(int sfd, File *file, char *trama)
-{
-    if (file->mida >= LEN_DATOS)
-    {
+void leerDatosIMG(int sfd, File *file, char *trama) {
+    if (file->mida >= LEN_DATOS) {
         write(file->fd, trama + 16, LEN_DATOS);
         file->mida -= LEN_DATOS;
-    }
-    else
-    {
+    } else {
         write(file->fd, trama + 16, file->mida);
         file->mida = 0;
     }
-    if (file->mida == 0)
-    {
+    if (file->mida == 0) {
         close(file->fd);
         char downloadedHash[32];
         calcularHash(downloadedHash, file->nom);
-        if (0 == memcmp(downloadedHash, file->hash, 32))
-        {
-
+        if (0 == memcmp(downloadedHash, file->hash, 32)) {
             encapsulaTrama(MACHINE_NAME, 'I', "IMAGE OK", trama);
             write(sfd, trama, LEN_TRAMA);
-        }
-        else
-        {
+        } else {
             encapsulaTrama(MACHINE_NAME, 'R', "“IMAGE KO", trama);
             write(sfd, trama, LEN_TRAMA);
         }
         char aux[MAX_STR];
-        strtok(file->nom,"/");
-        sprintf(aux, "Guardada com %s\n", strtok(NULL,"/"));
+        strtok(file->nom, "/");
+        sprintf(aux, "Guardada com %s\n", strtok(NULL, "/"));
         display(aux);
         free(file->nom);
         free(file);
@@ -341,20 +290,14 @@ void leerDatosIMG(int sfd, File *file, char *trama)
     }
 }
 
-
-
-
-void encapsulaTramaBinaria(char *origen, char tipo, char *datos, char *trama)
-{
+void encapsulaTramaBinaria(char *origen, char tipo, char *datos, char *trama) {
     int j, i = LEN_ORIGEN + 1;
     bzero(trama, LEN_TRAMA);
     strcat(trama, origen);
     trama[LEN_ORIGEN] = tipo;
 
-    for (j = 0; j < LEN_DATOS; j++)
-    {
+    for (j = 0; j < LEN_DATOS; j++) {
         trama[i] = datos[j];
         i++;
     }
 }
-

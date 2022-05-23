@@ -1,8 +1,9 @@
 #ifndef SOCKETS_H
 #define SOCKETS_H
 
-#include "funciones.h"
 #include <strings.h>
+
+#include "funciones.h"
 
 int crearConexion(uint16_t port);
 

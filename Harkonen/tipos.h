@@ -13,7 +13,6 @@
 #define ARG_FORMAT_ERR "ERROR, el argument no te un format esperat\n"
 #define SCAN "\nScanning pids"
 
-
 #define FORKERR "\nError fork per netejar \n"
 #define KILLINGMSG "\nkilling pid %d\n"
 #endif

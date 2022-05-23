@@ -2,10 +2,10 @@
 #define COMANDOS_H
 
 #include <netdb.h>
+#include <strings.h>
 
 #include "funciones.h"
 #include "sockets.h"
-#include <strings.h>
 typedef struct {
     char *id;
     char *nombre;
